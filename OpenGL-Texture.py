@@ -27,6 +27,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from Ponto import Ponto
+from Muro import Muro
 #from Linha import Linha
 import numpy as np
 from PIL import Image
@@ -35,6 +36,10 @@ import time
 
 Texturas = []
 Angulo = 0.0
+MuroPolygons = [Muro]
+tamX = 50
+tamY = 15
+tamZ = 25
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -141,6 +146,21 @@ def UseTexture(NroDaTextura: int):
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, Texturas[NroDaTextura])
 
+def criaMuro():
+    global MuroPolygons
+    i = 0
+    for x in range(0, 1):
+        for y in range(0, tamY):
+         
+            for z in range(0, tamZ):
+                MuroPolygons.append(Muro())
+                MuroPolygons[i].x = tamX/2
+                MuroPolygons[i].y = y
+                MuroPolygons[i].z = z
+                MuroPolygons[i].texIndex = 1
+                i += 1
+          
+
 # **********************************************************************
 #  init()
 #  Inicializa os parÃ¢metros globais de OpenGL
@@ -157,7 +177,7 @@ def init():
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-
+    criaMuro()
     # Carrega texturas
     global Texturas
     Texturas += [LoadTexture("grass.jpg")]
@@ -177,7 +197,7 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(25, 15, 30, 25, 0, 0, 0, 1.0, 0)
+    gluLookAt(25, 15, 35, 25, 0, 0, 0, 1.0, 0)
 
 
 # **********************************************************************
@@ -292,9 +312,9 @@ def DesenhaLadrilho():
 def DesenhaPiso():
     glPushMatrix()
     glTranslated(0, -1, 0)
-    for x in range(0, 50):
+    for x in range(0, tamX):
         glPushMatrix()
-        for z in range(0, 25):
+        for z in range(0, tamZ):
             UseTexture(0)
             DesenhaLadrilho()
             glTranslated(0, 0, 1)
@@ -305,20 +325,26 @@ def DesenhaPiso():
 
 def DesenhaMuro():
 
-    glPushMatrix()
-    glTranslated(25, -1, 0)
-    for x in range(0, 1):
+    #glPushMatrix()
+    #glTranslated(25, -1, 0)
+    #for x in range(0, 1):
+    #    glPushMatrix()
+    #    for y in range(-1, 15):
+    #        glPushMatrix()
+    #        for z in range(0, 25):
+    #            DesenhaCubo()
+    #            glTranslated(0, 0, 1)
+    #        glPopMatrix()
+    #        glTranslated(0, 1, 0)
+    #    glTranslated(1, 0, 0)
+    #    glPopMatrix()
+    #glPopMatrix()
+    for p in MuroPolygons:
         glPushMatrix()
-        for y in range(-1, 15):
-            glPushMatrix()
-            for z in range(0, 25):
-                DesenhaCubo()
-                glTranslated(0, 0, 1)
-            glPopMatrix()
-            glTranslated(0, 1, 0)
-        glTranslated(1, 0, 0)
+        glTranslated(tamX/2, p.y, p.z)
+        DesenhaCubo()
         glPopMatrix()
-    glPopMatrix()
+
 
 
 # **********************************************************************
