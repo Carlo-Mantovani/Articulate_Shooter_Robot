@@ -51,7 +51,7 @@ class Ponto:
 # n : ponto final da reta 2                                              */
 # 
 # Retorna:
-# 0, se não houver interseccao ou 1, caso haja                                                                       */
+# 0, se não houver interseccao ou 1, caso haja                           */
 # int, valor do parâmetro no ponto de interseção (sobre a reta KL)       */
 # int, valor do parâmetro no ponto de interseção (sobre a reta MN)       */
 #                                                                        */

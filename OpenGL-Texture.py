@@ -180,9 +180,9 @@ def init():
     criaMuro()
     # Carrega texturas
     global Texturas
-    Texturas += [LoadTexture("grass.jpg")]
-    Texturas += [LoadTexture("bricks.jpg")]
-    Texturas += [LoadTexture("Piso.jpg")]
+    Texturas += [LoadTexture("textures/grass.jpg")]
+    Texturas += [LoadTexture("textures/bricks.jpg")]
+    Texturas += [LoadTexture("textures/Piso.jpg")]
     #Texturas += [LoadTexture("among.jpg")]
 # **********************************************************************
 #
