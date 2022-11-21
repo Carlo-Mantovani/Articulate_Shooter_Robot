@@ -50,8 +50,6 @@ tamZ = 25
 #  de referência do objeto SRO.
 #  Para maiores detalhes, veja a página
 #  https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/Interseccao/ExerciciosDeInterseccao.html
-
-
 def CalculaPonto(p: Ponto) -> Ponto:
 
     ponto_novo = [0, 0, 0, 0]
@@ -163,10 +161,8 @@ def criaMuro():
 
 # **********************************************************************
 #  init()
-#  Inicializa os parÃ¢metros globais de OpenGL
+#  Inicializa os parametros globais de OpenGL
 # / **********************************************************************
-
-
 def init():
 
     # Define a cor do fundo da tela (BRANCO)
