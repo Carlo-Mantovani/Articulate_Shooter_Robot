@@ -23,6 +23,7 @@
 #   Veja o arquivo Patch.rtf, armazenado na mesma pasta deste fonte.
 #
 # ***********************************************************************************
+from random import random
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -32,11 +33,13 @@ from Muro import Muro
 import numpy as np
 from PIL import Image
 import time
+import random
 
 
 Texturas = []
 Angulo = 0.0
-MuroPolygons = [Muro]
+
+MuroMatrix = [[None]*30]*30
 tamX = 50
 tamY = 15
 tamZ = 25
@@ -145,18 +148,15 @@ def UseTexture(NroDaTextura: int):
         glBindTexture(GL_TEXTURE_2D, Texturas[NroDaTextura])
 
 def criaMuro():
-    global MuroPolygons
+    global MuroMatrix
     i = 0
     for x in range(0, 1):
         for y in range(0, tamY):
          
             for z in range(0, tamZ):
-                MuroPolygons.append(Muro())
-                MuroPolygons[i].x = tamX/2
-                MuroPolygons[i].y = y
-                MuroPolygons[i].z = z
-                MuroPolygons[i].texIndex = 1
-                i += 1
+                #MuroPolygons.append(Muro())
+                MuroMatrix[z][y] = True
+               
           
 
 # **********************************************************************
@@ -280,6 +280,9 @@ def DesenhaCubo():
 # O ladrilho tem largula 1, centro no (0,0,0) e esta' sobre o plano XZ
 # **********************************************************************
 def DesenhaLadrilho():
+    glPushMatrix()
+    glTranslatef(tamX/2,-1,tamZ/2-2)
+    glScaled(tamX,0,tamZ+1)
     glColor3f(1, 1, 1)  # desenha QUAD em branco, pois vai usa textura
     glBegin(GL_QUADS)
     glNormal3f(0, 1, 0)
@@ -301,11 +304,12 @@ def DesenhaLadrilho():
     glVertex3f(0.5,  0.0,  0.5)
     glVertex3f(0.5,  0.0, -0.5)
     glEnd()
+    glPopMatrix()
 
 # **********************************************************************
 
 
-def DesenhaPiso():
+def DesenhaPiso2():
     glPushMatrix()
     glTranslated(0, -1, 0)
     for x in range(0, tamX):
@@ -318,6 +322,14 @@ def DesenhaPiso():
         glTranslated(1, 0, 0)
     glPopMatrix()
 
+def DesenhaPiso():
+    glPushMatrix()
+    #glLoadIdentity()
+    #glTranslated(25,1,15)
+    #glScaled(tamX, 0, tamZ)
+    UseTexture(0)
+    DesenhaLadrilho()
+    glPopMatrix()
 
 def DesenhaMuro():
 
@@ -335,11 +347,13 @@ def DesenhaMuro():
     #    glTranslated(1, 0, 0)
     #    glPopMatrix()
     #glPopMatrix()
-    for p in MuroPolygons:
-        glPushMatrix()
-        glTranslated(tamX/2, p.y, p.z)
-        DesenhaCubo()
-        glPopMatrix()
+    for i in range (0,25):
+        for j in range (0,15):
+            if MuroMatrix[i][j]:
+                glPushMatrix()
+                glTranslated(tamX/2, j, i)
+                DesenhaCubo()
+                glPopMatrix()
 
 
 
@@ -424,7 +438,7 @@ ESCAPE = b'\x1b'
 
 
 def keyboard(*args):
-    global image
+    global image, MuroMatrix
     #print (args)
     # If escape is pressed, kill everything.
 
@@ -436,6 +450,11 @@ def keyboard(*args):
 
     if args[0] == b'i':
         image.show()
+    if args[0] == b'd':
+        z = random.randrange(25)
+        y = random.randrange(15)
+        print (z)
+        MuroMatrix[random.randint(0,25)][random.randint(0,15)] = False
 
     # ForÃ§a o redesenho da tela
     glutPostRedisplay()
