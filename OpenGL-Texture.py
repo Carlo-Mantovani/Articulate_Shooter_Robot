@@ -39,10 +39,10 @@ import random
 Texturas = []
 Angulo = 0.0
 
-MuroMatrix = [[None]*30]*30
 tamX = 50
 tamY = 15
 tamZ = 25
+MuroMatrix = [[True]*tamZ]*tamY # Matriz 15x25
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -145,19 +145,7 @@ def UseTexture(NroDaTextura: int):
         glDisable(GL_TEXTURE_2D)
     else:
         glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, Texturas[NroDaTextura])
-
-def criaMuro():
-    global MuroMatrix
-    i = 0
-    for x in range(0, 1):
-        for y in range(0, tamY):
-         
-            for z in range(0, tamZ):
-                #MuroPolygons.append(Muro())
-                MuroMatrix[z][y] = True
-               
-          
+        glBindTexture(GL_TEXTURE_2D, Texturas[NroDaTextura])           
 
 # **********************************************************************
 #  init()
@@ -173,7 +161,6 @@ def init():
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-    criaMuro()
     # Carrega texturas
     global Texturas
     Texturas += [LoadTexture("textures/grass.jpg")]
@@ -183,8 +170,6 @@ def init():
 # **********************************************************************
 #
 # **********************************************************************
-
-
 def PosicUser():
 
     glMatrixMode(GL_PROJECTION)
@@ -193,15 +178,13 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(25, 15, 35, 25, 0, 0, 0, 1.0, 0)
+    gluLookAt(45, 5, 10, 0, 5, 10, 0, 1.0, 0)
 
 
 # **********************************************************************
 #  reshape( w: int, h: int )
 #  trata o redimensionamento da janela OpenGL
 # **********************************************************************
-
-
 def reshape(w: int, h: int):
     global AspectRatio
     # Evita divisÃ£o por zero, no caso de uam janela com largura 0.
@@ -219,8 +202,6 @@ def reshape(w: int, h: int):
     PosicUser()
 
 # **********************************************************************
-
-
 def DefineLuz():
     # Define cores para um objeto dourado
     LuzAmbiente = [0.4, 0.4, 0.4]
@@ -260,8 +241,6 @@ def DefineLuz():
 # DesenhaCubo()
 # Desenha o cenario
 # **********************************************************************
-
-
 def DesenhaCubo():
 
     glPushMatrix()
@@ -275,12 +254,12 @@ def DesenhaCubo():
 
 
 # **********************************************************************
-# void DesenhaLadrilho(int corBorda, int corDentro)
-# Desenha uma celula do piso.
-# O ladrilho tem largula 1, centro no (0,0,0) e esta' sobre o plano XZ
+# void DesenhaPiso()
+#   Desenha o piso como um unico grande ladrilho
 # **********************************************************************
-def DesenhaLadrilho():
+def DesenhaPiso():
     glPushMatrix()
+    UseTexture(0)
     glTranslatef(tamX/2,-1,tamZ/2-2)
     glScaled(tamX,0,tamZ+1)
     glColor3f(1, 1, 1)  # desenha QUAD em branco, pois vai usa textura
@@ -307,51 +286,12 @@ def DesenhaLadrilho():
     glPopMatrix()
 
 # **********************************************************************
-
-
-def DesenhaPiso2():
-    glPushMatrix()
-    glTranslated(0, -1, 0)
-    for x in range(0, tamX):
-        glPushMatrix()
-        for z in range(0, tamZ):
-            UseTexture(0)
-            DesenhaLadrilho()
-            glTranslated(0, 0, 1)
-        glPopMatrix()
-        glTranslated(1, 0, 0)
-    glPopMatrix()
-
-def DesenhaPiso():
-    glPushMatrix()
-    #glLoadIdentity()
-    #glTranslated(25,1,15)
-    #glScaled(tamX, 0, tamZ)
-    UseTexture(0)
-    DesenhaLadrilho()
-    glPopMatrix()
-
 def DesenhaMuro():
-
-    #glPushMatrix()
-    #glTranslated(25, -1, 0)
-    #for x in range(0, 1):
-    #    glPushMatrix()
-    #    for y in range(-1, 15):
-    #        glPushMatrix()
-    #        for z in range(0, 25):
-    #            DesenhaCubo()
-    #            glTranslated(0, 0, 1)
-    #        glPopMatrix()
-    #        glTranslated(0, 1, 0)
-    #    glTranslated(1, 0, 0)
-    #    glPopMatrix()
-    #glPopMatrix()
-    for i in range (0,25):
-        for j in range (0,15):
+    for i in range (tamY):
+        for j in range (tamZ):
             if MuroMatrix[i][j]:
                 glPushMatrix()
-                glTranslated(tamX/2, j, i)
+                glTranslated(tamX/2, i, j)
                 DesenhaCubo()
                 glPopMatrix()
 
@@ -376,7 +316,7 @@ def display():
 
     time = glutGet(GLUT_ELAPSED_TIME)
     time = time / 1000.0
-    print(time)
+    # print(time)
     UseTexture(-1)  # desabilita o uso de texturas
     # Desenha um cubo vermelho à esquerda
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
