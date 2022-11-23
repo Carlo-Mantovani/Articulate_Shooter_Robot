@@ -42,7 +42,7 @@ Angulo = 0.0
 tamX = 50
 tamY = 15
 tamZ = 25
-MuroMatrix = [[True]*tamZ]*tamY # Matriz 15x25
+MuroMatrix = tamY*[tamZ*[True]] # Matriz 15x25
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -67,10 +67,8 @@ def CalculaPonto(p: Ponto) -> Ponto:
     x = ponto_novo[0]
     y = ponto_novo[1]
     z = -ponto_novo[2]
-    #print ("Ponto na saida:")
-    #print (ponto_novo)
+    
     return Ponto(x, y, z)
-
 
 # **********************************************************************
 # LoadTexture
@@ -79,8 +77,6 @@ def CalculaPonto(p: Ponto) -> Ponto:
 def LoadTexture(nome) -> int:
     # carrega a imagem
     image = Image.open(nome)
-    # print ("X:", image.size[0])
-    # print ("Y:", image.size[1])
     # converte para o formato de OpenGL
     img_data = np.array(list(image.getdata()), np.uint8)
 
@@ -124,7 +120,6 @@ def LoadTexture(nome) -> int:
     if errorCode != GL_NO_ERROR:
         print("Houve algum erro na criacao da textura.")
         return -1
-    # image.show()
     return texture
 
 # **********************************************************************
@@ -133,8 +128,6 @@ def LoadTexture(nome) -> int:
 #  Se 'NroDaTextura' for maior que a quantidade de texturas, gera
 #  mensagem de erro e desabilita o uso de texturas
 # **********************************************************************
-
-
 def UseTexture(NroDaTextura: int):
     global Texturas
     if (NroDaTextura > len(Texturas)):
@@ -178,7 +171,7 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(45, 5, 10, 0, 5, 10, 0, 1.0, 0)
+    gluLookAt(45, 5, 12, 0, 5, 10, 0, 1.0, 0)
 
 
 # **********************************************************************
@@ -260,8 +253,8 @@ def DesenhaCubo():
 def DesenhaPiso():
     glPushMatrix()
     UseTexture(0)
-    glTranslatef(tamX/2,-1,tamZ/2-2)
-    glScaled(tamX,0,tamZ+1)
+    glTranslatef(tamX/2,-1,tamZ/2-0.5)
+    glScaled(tamX,0,tamZ+2.5)
     glColor3f(1, 1, 1)  # desenha QUAD em branco, pois vai usa textura
     glBegin(GL_QUADS)
     glNormal3f(0, 1, 0)
