@@ -1,9 +1,6 @@
 # ***********************************************************************************
-#   OpenGLBasico3D-V5.py
-#       Autor: Márcio Sarroglia Pinho
-#       pinho@pucrs.br
-#   Este programa exibe dois Cubos em OpenGL
-#   Para maiores informações, consulte
+#   Autor: Marcio Sarroglia Pinho
+#   pinho@pucrs.br
 #
 #   Para construir este programa, foi utilizada a biblioteca PyOpenGL, disponível em
 #   http://pyopengl.sourceforge.net/documentation/index.html
@@ -11,16 +8,10 @@
 #   Outro exemplo de código em Python, usando OpenGL3D pode ser obtido em
 #   http://openglsamples.sourceforge.net/cube_py.html
 #
-#   Sugere-se consultar também as páginas listadas
+#   Sugere-se consultar tambem as paginas listadas
 #   a seguir:
 #   http://bazaar.launchpad.net/~mcfletch/pyopengl-demo/trunk/view/head:/PyOpenGL-Demo/NeHe/lesson1.py
 #   http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GLUT
-#
-#   No caso de usar no MacOS, pode ser necessário alterar o arquivo ctypesloader.py,
-#   conforme a descrição que está nestes links:
-#   https://stackoverflow.com/questions/63475461/unable-to-import-opengl-gl-in-python-on-macos
-#   https://stackoverflow.com/questions/6819661/python-location-on-mac-osx
-#   Veja o arquivo Patch.rtf, armazenado na mesma pasta deste fonte.
 #
 # ***********************************************************************************
 from random import random
@@ -28,13 +19,10 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from Ponto import Ponto
-from Muro import Muro
-#from Linha import Linha
 import numpy as np
 from PIL import Image
 import time
 import random
-
 
 Texturas = []
 Angulo = 0.0
@@ -46,15 +34,14 @@ MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
-#  Esta função calcula as coordenadas
-#  de um ponto no sistema de referência da
-#  camera (SRC), ou seja, aplica as rotações,
-#  escalas e translações a um ponto no sistema
-#  de referência do objeto SRO.
-#  Para maiores detalhes, veja a página
+#  Esta funcao calcula as coordenadas
+#  de um ponto no sistema de referencia da
+#  camera (SRC), ou seja, aplica as rotaçcoes,
+#  escalas e translacoes a um ponto no sistema
+#  de referencia do objeto SRO.
+#  Para maiores detalhes, veja a pagina
 #  https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/Interseccao/ExerciciosDeInterseccao.html
 def CalculaPonto(p: Ponto) -> Ponto:
-
     ponto_novo = [0, 0, 0, 0]
 
     mvmatrix = glGetDoublev(GL_MODELVIEW_MATRIX)
@@ -143,9 +130,8 @@ def UseTexture(NroDaTextura: int):
 # **********************************************************************
 #  init()
 #  Inicializa os parametros globais de OpenGL
-# / **********************************************************************
+# **********************************************************************
 def init():
-
     # Define a cor do fundo da tela (BRANCO)
     glClearColor(0.5, 0.5, 0.5, 1.0)
 
@@ -158,8 +144,6 @@ def init():
     global Texturas
     Texturas += [LoadTexture("textures/grass.jpg")]
     Texturas += [LoadTexture("textures/bricks.jpg")]
-    Texturas += [LoadTexture("textures/Piso.jpg")]
-    #Texturas += [LoadTexture("among.jpg")]
 # **********************************************************************
 #
 # **********************************************************************
@@ -173,18 +157,17 @@ def PosicUser():
     glLoadIdentity()
     gluLookAt(45, 5, 12, 0, 5, 10, 0, 1.0, 0)
 
-
 # **********************************************************************
 #  reshape( w: int, h: int )
-#  trata o redimensionamento da janela OpenGL
+#   trata o redimensionamento da janela OpenGL
 # **********************************************************************
 def reshape(w: int, h: int):
     global AspectRatio
-    # Evita divisÃ£o por zero, no caso de uam janela com largura 0.
+    # Evita divisao por zero, no caso de uam janela com largura 0.
     if h == 0:
         h = 1
-    # Ajusta a relaÃ§Ã£o entre largura e altura para evitar distorÃ§Ã£o na imagem.
-    # Veja funÃ§Ã£o "PosicUser".
+    # Ajusta a relacao entre largura e altura para evitar distorcao na imagem.
+    # Veja funcao "PosicUser".
     AspectRatio = w / h
     # Reset the coordinate system before modifying
     glMatrixMode(GL_PROJECTION)
@@ -202,8 +185,6 @@ def DefineLuz():
     LuzEspecular = [0.9, 0.9, 0.9]
     PosicaoLuz0 = [2.0, 3.0, 0.0]  # Posicao da Luz
     Especularidade = [1.0, 1.0, 1.0]
-
-    # ****************  Fonte de Luz 0
 
     glEnable(GL_COLOR_MATERIAL)
 
@@ -227,12 +208,12 @@ def DefineLuz():
 
     # Define a concentracao do brilho.
     # Quanto maior o valor do Segundo parametro, mais
-    # concentrado serah o brilho. (Valores validos: de 0 a 128)
+    # concentrado sera o brilho. (Valores validos: de 0 a 128)
     glMateriali(GL_FRONT, GL_SHININESS, 51)
 
 # **********************************************************************
 # DesenhaCubo()
-# Desenha o cenario
+#   Desenha o cenario
 # **********************************************************************
 def DesenhaCubo():
 
@@ -245,17 +226,18 @@ def DesenhaCubo():
     glDisable(GL_TEXTURE_GEN_T)
     glPopMatrix()
 
-
 # **********************************************************************
 # void DesenhaPiso()
 #   Desenha o piso como um unico grande ladrilho
 # **********************************************************************
 def DesenhaPiso():
     glPushMatrix()
+    
     UseTexture(0)
     glTranslatef(tamX/2,-1,tamZ/2-0.5)
     glScaled(tamX,0,tamZ+2.5)
-    glColor3f(1, 1, 1)  # desenha QUAD em branco, pois vai usa textura
+    
+    glColor3f(1, 1, 1)  # desenha QUAD em branco, pois vai usar textura
     glBegin(GL_QUADS)
     glNormal3f(0, 1, 0)
     glTexCoord(0, 0)
@@ -301,15 +283,11 @@ def display():
 
     # DefineLuz()
     PosicUser()
-
     glMatrixMode(GL_MODELVIEW)
 
     DesenhaPiso()
     DesenhaMuro()
 
-    time = glutGet(GLUT_ELAPSED_TIME)
-    time = time / 1000.0
-    # print(time)
     UseTexture(-1)  # desabilita o uso de texturas
     # Desenha um cubo vermelho à esquerda
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
@@ -317,8 +295,6 @@ def display():
     glTranslatef(20, 0, 0)
     glRotatef(Angulo, 0, 1, 0)
     DesenhaCubo()
-    #P = CalculaPonto(Ponto(0,0,0))
-    #P.imprime("Centro do Cubo da Esquerda:")
     glPopMatrix()
 
     # Desenha um cubo amarelo à direita
@@ -326,15 +302,11 @@ def display():
     glPushMatrix()
     glTranslatef(30, 0, 0)
     glRotatef(-Angulo, 0, 1, 0)
-    # DesenhaCubo()
-    #P = CalculaPonto(Ponto(0,0,0))
-    #P.imprime("Centro do Cubo da Direita:")
+    DesenhaCubo()
     glPopMatrix()
 
     Angulo = Angulo + 1
-
     glutSwapBuffers()
-
 
 # **********************************************************************
 # animate()
@@ -356,7 +328,7 @@ def animate():
     TempoTotal += dt
     nFrames += 1
 
-    if AccumDeltaT > 1.0/30:  # fixa a atualizaÃ§Ã£o da tela em 30
+    if AccumDeltaT > 1.0/30:  # fixa a atualizacao da tela em 30
         AccumDeltaT = 0
         glutPostRedisplay()
 
@@ -370,14 +342,14 @@ def keyboard(*args):
     global image, MuroMatrix
     # If escape is pressed, kill everything.
 
-    if args[0] == ESCAPE:   # Termina o programa qdo
-        os._exit(0)         # a tecla ESC for pressionada
-    if args[0] == b' ':
-        init()
     if args[0] == b'd':
         MuroMatrix[random.randint(0,14)][random.randint(0,24)] = False
     if args[0] == b'i':
         image.show()
+    if args[0] == b' ':
+        init()
+    if args[0] == ESCAPE:   # Termina o programa qdo
+        os._exit(0)         # a tecla ESC for pressionada
 
     # Forca o redesenho da tela
     glutPostRedisplay()
@@ -397,10 +369,8 @@ def arrow_keys(a_keys: int, x: int, y: int):
 
     glutPostRedisplay()
 
-
 def mouse(button: int, state: int, x: int, y: int):
     glutPostRedisplay()
-
 
 def mouseMove(x: int, y: int):
     glutPostRedisplay()
@@ -415,44 +385,42 @@ glutInitWindowPosition(0, 0)
 # Define o tamanho inicial da janela grafica do programa
 glutInitWindowSize(650, 500)
 # Cria a janela na tela, definindo o nome da
-# que aparecera na barra de tÃ­tulo da janela.
+# que aparecera na barra de ti­tulo da janela.
 glutInitWindowPosition(100, 100)
-wind = glutCreateWindow("OpenGL 3D & Textures")
+wind = glutCreateWindow("Articulate Shooter Robot")
 
-# executa algumas inicializaÃ§Ãµes
+# executa algumas inicializacoes
 init()
 
 # Define que o tratador de evento para
 # o redesenho da tela. A funcao "display"
-# serÃ¡ chamada automaticamente quando
-# for necessÃ¡rio redesenhar a janela
+# sera chamada automaticamente quando
+# for necessario redesenhar a janela
 glutDisplayFunc(display)
 glutIdleFunc(animate)
 
 # o redimensionamento da janela. A funcao "reshape"
 # Define que o tratador de evento para
-# serÃ¡ chamada automaticamente quando
-# o usuÃ¡rio alterar o tamanho da janela
+# sera chamada automaticamente quando
+# o usuario alterar o tamanho da janela
 glutReshapeFunc(reshape)
 
 # Define que o tratador de evento para
 # as teclas. A funcao "keyboard"
-# serÃ¡ chamada automaticamente sempre
-# o usuÃ¡rio pressionar uma tecla comum
+# sera chamada automaticamente sempre
+# o usuario pressionar uma tecla comum
 glutKeyboardFunc(keyboard)
 
 # Define que o tratador de evento para
 # as teclas especiais(F1, F2,... ALT-A,
 # ALT-B, Teclas de Seta, ...).
-# A funcao "arrow_keys" serÃ¡ chamada
-# automaticamente sempre o usuÃ¡rio
+# A funcao "arrow_keys" sera chamada
+# automaticamente sempre o usuario
 # pressionar uma tecla especial
 glutSpecialFunc(arrow_keys)
 
 # glutMouseFunc(mouse)
 # glutMotionFunc(mouseMove)
-
-
 try:
     # inicia o tratamento dos eventos
     glutMainLoop()
