@@ -42,7 +42,7 @@ Angulo = 0.0
 tamX = 50
 tamY = 15
 tamZ = 25
-MuroMatrix = tamY*[tamZ*[True]] # Matriz 15x25
+MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -316,7 +316,7 @@ def display():
     glPushMatrix()
     glTranslatef(20, 0, 0)
     glRotatef(Angulo, 0, 1, 0)
-    # DesenhaCubo()
+    DesenhaCubo()
     #P = CalculaPonto(Ponto(0,0,0))
     #P.imprime("Centro do Cubo da Esquerda:")
     glPopMatrix()
@@ -338,15 +338,13 @@ def display():
 
 # **********************************************************************
 # animate()
-# Funcao chama enquanto o programa esta ocioso
-# Calcula o FPS e numero de interseccao detectadas, junto com outras informacoes
+#   Funcao chama enquanto o programa esta ocioso
+#   Calcula o FPS e numero de interseccao detectadas, junto com outras informacoes
 #
 # **********************************************************************
 # Variaveis Globais
 nFrames, TempoTotal, AccumDeltaT = 0, 0, 0
 oldTime = time.time()
-
-
 def animate():
     global nFrames, TempoTotal, AccumDeltaT, oldTime
 
@@ -368,35 +366,25 @@ def animate():
 #
 # **********************************************************************
 ESCAPE = b'\x1b'
-
-
 def keyboard(*args):
     global image, MuroMatrix
-    #print (args)
     # If escape is pressed, kill everything.
 
     if args[0] == ESCAPE:   # Termina o programa qdo
         os._exit(0)         # a tecla ESC for pressionada
-
     if args[0] == b' ':
         init()
-
+    if args[0] == b'd':
+        MuroMatrix[random.randint(0,14)][random.randint(0,24)] = False
     if args[0] == b'i':
         image.show()
-    if args[0] == b'd':
-        z = random.randrange(25)
-        y = random.randrange(15)
-        print (z)
-        MuroMatrix[random.randint(0,25)][random.randint(0,15)] = False
 
-    # ForÃ§a o redesenho da tela
+    # Forca o redesenho da tela
     glutPostRedisplay()
 
 # **********************************************************************
 #  arrow_keys ( a_keys: int, x: int, y: int )
 # **********************************************************************
-
-
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
         pass
@@ -420,8 +408,6 @@ def mouseMove(x: int, y: int):
 # ***********************************************************************************
 # Programa Principal
 # ***********************************************************************************
-
-
 glutInit(sys.argv)
 glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_RGB)
 glutInitWindowPosition(0, 0)
