@@ -17,7 +17,8 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import Ponto
+from Robot import Robot
+from Point import Point
 import Textures
 
 import time
@@ -30,6 +31,8 @@ tamX = 50
 tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
+
+robot = Robot(30, 0, 10)
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -40,7 +43,7 @@ MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 #  de referencia do objeto SRO.
 #  Para maiores detalhes, veja a pagina
 #  https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/Interseccao/ExerciciosDeInterseccao.html
-def CalculaPonto(p: Ponto) -> Ponto:
+def CalculaPonto(p: Point) -> Point:
     ponto_novo = [0, 0, 0, 0]
 
     mvmatrix = glGetDoublev(GL_MODELVIEW_MATRIX)
@@ -54,7 +57,7 @@ def CalculaPonto(p: Ponto) -> Ponto:
     y = ponto_novo[1]
     z = -ponto_novo[2]
     
-    return Ponto(x, y, z)           
+    return Point(x, y, z)           
 
 # **********************************************************************
 #  init()
@@ -149,7 +152,6 @@ def DesenhaCubo():
     glPushMatrix()
     glEnable(GL_TEXTURE_GEN_S)
     glEnable(GL_TEXTURE_GEN_T)
-    glBindTexture(GL_TEXTURE_2D, Texturas[1])
     glutSolidCube(1)
     glDisable(GL_TEXTURE_GEN_S)
     glDisable(GL_TEXTURE_GEN_T)
@@ -191,6 +193,7 @@ def DesenhaPiso():
 
 # **********************************************************************
 def DesenhaMuro():
+    Textures.UseTexture(1, Texturas)
     for i in range (tamY):
         for j in range (tamZ):
             if MuroMatrix[i][j]:
@@ -199,11 +202,9 @@ def DesenhaMuro():
                 DesenhaCubo()
                 glPopMatrix()
 
-
-
 # **********************************************************************
 # display()
-# Funcao que exibe os desenhos na tela
+#   Funcao que exibe os desenhos na tela
 # **********************************************************************
 def display():
     global Angulo
@@ -229,9 +230,10 @@ def display():
     # Desenha um cubo amarelo à direita
     glColor3f(0.5, 0.5, 0.0)  # Amarelo
     glPushMatrix()
-    glTranslatef(30, 0, 0)
+    glTranslatef(30, 0, 10)
     glRotatef(-Angulo, 0, 1, 0)
     DesenhaCubo()
+    robot.imprime()
     glPopMatrix()
 
     Angulo = Angulo + 1

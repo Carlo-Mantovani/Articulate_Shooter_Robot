@@ -1,12 +1,9 @@
 # ************************************************
-#   Ponto.py
-#   Define a classe Ponto
+#   Point.py
 #   Autor: Márcio Sarroglia Pinho
 #       pinho@pucrs.br
 # ************************************************
-
-""" Classe Ponto """
-class Ponto:   
+class Point:   
     def __init__(self, x=0,y=0,z=0):
         self.x = x
         self.y = y
@@ -26,16 +23,16 @@ class Ponto:
         self.x = x
         self.y = y
         self.z = z
-    
-# Definicao de operadores
-# https://www.programiz.com/python-programming/operator-overloading
+            
+    # Definicao de operadores
+    # https://www.programiz.com/python-programming/operator-overloading
     def __add__(self, other):
             x = self.x + other.x
             y = self.y + other.y
-            return Ponto(x, y)
+            return Point(x, y)
 
     def __mul__(self, other: int):
             x = self.x * other
             y = self.y * other
-            return Ponto(x, y)
+            return Point(x, y)
 
