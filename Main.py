@@ -32,7 +32,7 @@ tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 
-robot = Robot(30, 0, 10)
+robot = Robot(Point(20, 0, 10))
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -87,7 +87,7 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(45, 5, 12, 0, 5, 10, 0, 1.0, 0)
+    gluLookAt(0, 3, 10, 5, 4, 10, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -211,7 +211,7 @@ def display():
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    # DefineLuz()
+    DefineLuz()
     PosicUser()
     glMatrixMode(GL_MODELVIEW)
 
@@ -232,9 +232,11 @@ def display():
     glPushMatrix()
     glTranslatef(30, 0, 10)
     glRotatef(-Angulo, 0, 1, 0)
-    DesenhaCubo()
-    robot.imprime()
+    # DesenhaCubo()
     glPopMatrix()
+    
+    glColor3f(0.5, 0.0, 0.0)  # Vermelho
+    robot.draw()
 
     Angulo = Angulo + 1
     glutSwapBuffers()
@@ -290,13 +292,13 @@ def keyboard(*args):
 # **********************************************************************
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        pass
+        robot.tankPos.x += 1
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        pass
+        robot.tankPos.x -= 1
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        pass
+        robot.tankPos.z -= 1
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        pass
+        robot.tankPos.z += 1
 
     glutPostRedisplay()
 
