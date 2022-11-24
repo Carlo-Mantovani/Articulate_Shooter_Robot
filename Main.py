@@ -32,7 +32,7 @@ tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 
-robot = Robot(Point(20, 0, 10))
+robot = Robot()
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -87,7 +87,7 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(0, 3, 10, 5, 4, 10, 0, 1.0, 0)
+    gluLookAt(-10, 3, 10, 5, 4, 10, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -292,13 +292,15 @@ def keyboard(*args):
 # **********************************************************************
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        robot.tankPos.x += 1
+        if(robot.pos.x < tamX-1):
+            robot.pos.x += 1
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        robot.tankPos.x -= 1
+        if(robot.pos.x > 0):
+            robot.pos.x -= 1
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        robot.tankPos.z -= 1
+        robot.rotation += 0.5
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        robot.tankPos.z += 1
+        robot.rotation -= 0.5
 
     glutPostRedisplay()
 
