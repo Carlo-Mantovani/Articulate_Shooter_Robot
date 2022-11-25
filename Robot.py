@@ -1,15 +1,18 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from itertools import count
+from dataclasses import dataclass, field
 from Point import Point
 
+@dataclass(slots=True)
 class Robot:   
-    armHeight=2
-    def __init__(self):
-        self.pos = Point(20,0,10)
-        self.escale = Point(3,1,2)
-        self.rotation:float = 0.0 
-        
+    id: int = field(init=False, default_factory=count().__next__)
+    pos: Point = Point(20,0,10)
+    escale: Point = field(init=False, default=Point(3,1,2))
+    rotation: float = 0.0
+    armHeight: int = 2
+    
     def draw(self):
         glPushMatrix()
         # Draw the tank
