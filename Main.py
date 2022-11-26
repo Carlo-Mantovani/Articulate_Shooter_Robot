@@ -14,6 +14,7 @@
 #   http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GLUT
 #
 # ***********************************************************************************
+import math
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -293,10 +294,13 @@ def keyboard(*args):
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
         if(robot.pos.x < tamX-1):
-            robot.pos.x += 1
+            robot.pos.x += 1 * (math.sin(math.radians(robot.rotation)))
+            robot.pos.z += 1 * (math.cos(math.radians(robot.rotation)))
+         
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
         if(robot.pos.x > 0):
-            robot.pos.x -= 1
+            robot.pos.x -= 1 * (math.sin(math.radians(robot.rotation)))
+            robot.pos.z -= 1 * (math.cos(math.radians(robot.rotation)))
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
         robot.rotation += 0.5
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
