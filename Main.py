@@ -14,10 +14,12 @@
 #   http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GLUT
 #
 # ***********************************************************************************
+import math
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import Ponto
+from Robot import Robot
+from Point import Point
 import Textures
 
 import time
@@ -30,6 +32,8 @@ tamX = 50
 tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
+
+robot = Robot()
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -40,7 +44,7 @@ MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 #  de referencia do objeto SRO.
 #  Para maiores detalhes, veja a pagina
 #  https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/Interseccao/ExerciciosDeInterseccao.html
-def CalculaPonto(p: Ponto) -> Ponto:
+def CalculaPonto(p: Point) -> Point:
     ponto_novo = [0, 0, 0, 0]
 
     mvmatrix = glGetDoublev(GL_MODELVIEW_MATRIX)
@@ -54,7 +58,7 @@ def CalculaPonto(p: Ponto) -> Ponto:
     y = ponto_novo[1]
     z = -ponto_novo[2]
     
-    return Ponto(x, y, z)           
+    return Point(x, y, z)           
 
 # **********************************************************************
 #  init()
@@ -84,7 +88,7 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(45, 5, 12, 0, 5, 10, 0, 1.0, 0)
+    gluLookAt(-10, 3, 10, 5, 4, 10, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -149,7 +153,6 @@ def DesenhaCubo():
     glPushMatrix()
     glEnable(GL_TEXTURE_GEN_S)
     glEnable(GL_TEXTURE_GEN_T)
-    glBindTexture(GL_TEXTURE_2D, Texturas[1])
     glutSolidCube(1)
     glDisable(GL_TEXTURE_GEN_S)
     glDisable(GL_TEXTURE_GEN_T)
@@ -191,6 +194,7 @@ def DesenhaPiso():
 
 # **********************************************************************
 def DesenhaMuro():
+    Textures.UseTexture(1, Texturas)
     for i in range (tamY):
         for j in range (tamZ):
             if MuroMatrix[i][j]:
@@ -199,18 +203,16 @@ def DesenhaMuro():
                 DesenhaCubo()
                 glPopMatrix()
 
-
-
 # **********************************************************************
 # display()
-# Funcao que exibe os desenhos na tela
+#   Funcao que exibe os desenhos na tela
 # **********************************************************************
 def display():
     global Angulo
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    # DefineLuz()
+    DefineLuz()
     PosicUser()
     glMatrixMode(GL_MODELVIEW)
 
@@ -229,10 +231,13 @@ def display():
     # Desenha um cubo amarelo à direita
     glColor3f(0.5, 0.5, 0.0)  # Amarelo
     glPushMatrix()
-    glTranslatef(30, 0, 0)
+    glTranslatef(30, 0, 10)
     glRotatef(-Angulo, 0, 1, 0)
-    DesenhaCubo()
+    # DesenhaCubo()
     glPopMatrix()
+    
+    glColor3f(0.5, 0.0, 0.0)  # Vermelho
+    robot.draw()
 
     Angulo = Angulo + 1
     glutSwapBuffers()
@@ -288,13 +293,18 @@ def keyboard(*args):
 # **********************************************************************
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        pass
+        if(robot.pos.x < tamX-1):
+            robot.pos.x += 1 * (math.sin(math.radians(robot.rotation)))
+            robot.pos.z += 1 * (math.cos(math.radians(robot.rotation)))
+         
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        pass
+        if(robot.pos.x > 0):
+            robot.pos.x -= 1 * (math.sin(math.radians(robot.rotation)))
+            robot.pos.z -= 1 * (math.cos(math.radians(robot.rotation)))
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        pass
+        robot.rotation += 0.5
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        pass
+        robot.rotation -= 0.5
 
     glutPostRedisplay()
 
