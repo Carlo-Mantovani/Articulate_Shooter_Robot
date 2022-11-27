@@ -220,7 +220,8 @@ def display():
     DesenhaMuro()
     
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
-    robot.draw()
+    robot.drawTank()
+    robot.shoot()
 
     Angulo = Angulo + 1
     glutSwapBuffers()
