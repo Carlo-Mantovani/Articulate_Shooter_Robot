@@ -5,7 +5,6 @@ from itertools import count
 from dataclasses import dataclass, field
 from Point import Point
 
-
 @dataclass(slots=True)
 class Robot:
     id: int = field(init=False, default_factory=count().__next__)
@@ -16,7 +15,10 @@ class Robot:
     armRotation: float = field(init=False, default=0.0)
     speed: float = field(init=False, default=0.25)  # como deixar em 2.5m/s?
     shotStrenght: float = field(init=False, default=2)
-    shotTrajectory = [Point]*3
+    shotTrajectory: list[Point] = field(init=False, default_factory=list)
+
+    def __post_init__(self) -> None:
+        self.shotTrajectory = [Point(0, 0, 0), Point(0, 0, 0), Point(0, 0, 0)]
 
     def CalculaPonto(self, p: Point) -> Point:
         ponto_novo = [0, 0, 0, 0]
@@ -34,24 +36,24 @@ class Robot:
 
         return Point(x, y, z)
 
-    def move(self, direction: int):  # direction should be 1 or -1
+    def move(self, direction: int) -> None:  # direction should be 1 or -1
         vector = Point(1, 0, 0)
         vector.rotateY(self.rotation)
         self.pos = self.pos + vector * self.speed * direction
 
-    def rotateArm(self, direction: int):  # direction should be 1 or -1
+    def rotateArm(self, direction: int) -> None:  # direction should be 1 or -1
         newAngle = self.armRotation + 3 * direction
         if (newAngle < 0 or newAngle > 75):
             return
         self.armRotation = newAngle
 
-    def rotateAroundPoint(self, angle: float, p: Point):
+    def rotateAroundPoint(self, angle: float, p: Point) -> None:
         glTranslatef(p.x, p.y, p.z)
         glRotatef(angle, 0, 0, 1)
         glTranslatef(-p.x, -p.y, -p.z)
 
     # When calling this funct, must remeber to pop both matrix's
-    def defineCoordenates(self):
+    def defineCoordenates(self) -> None:
         glPushMatrix()
         # Move to the position
         glTranslatef(self.pos.x, self.pos.y, self.pos.z)
@@ -62,7 +64,7 @@ class Robot:
         glTranslatef(1, 0.5, 0)
         self.rotateAroundPoint(self.armRotation, Point(-1, 0, 0))
 
-    def shoot(self):
+    def shoot(self) -> None:
         self.defineCoordenates()
         glTranslatef(self.armEscale.x/2+self.shotStrenght, 0, 0)
         angle = -1 * (90 - self.armRotation)
@@ -72,7 +74,7 @@ class Robot:
         glPopMatrix()
         glPopMatrix()
 
-    def drawShot(self, modo):
+    def drawShot(self, modo) -> None:
 
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
@@ -87,7 +89,7 @@ class Robot:
             self.shotTrajectory[2] = self.CalculaPonto(
                 Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
 
-    def drawTank(self):
+    def drawTank(self) -> None:
         self.defineCoordenates()
         # Draw aim helper
         self.drawShot(1)

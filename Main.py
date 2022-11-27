@@ -24,7 +24,6 @@ from Bezier import *
 import Textures
 
 import time
-import random
 
 Texturas = []
 Angulo = 0.0
@@ -33,9 +32,8 @@ tamX = 50
 tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
+
 curva = Bezier()
-
-
 robot = Robot()
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
@@ -220,8 +218,6 @@ def display():
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
    
-
-
     DefineLuz()
     PosicUser()
     glMatrixMode(GL_MODELVIEW)
@@ -232,6 +228,7 @@ def display():
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
     robot.shoot()
+    
     CriaTrajetoria()
     glBegin(GL_LINES)
     glVertex3f(robot.shotTrajectory[0].x, robot.shotTrajectory[0].y, robot.shotTrajectory[0].z)
@@ -241,9 +238,6 @@ def display():
     glVertex3f(robot.shotTrajectory[1].x, robot.shotTrajectory[1].y, robot.shotTrajectory[1].z)
     glVertex3f(robot.shotTrajectory[2].x, robot.shotTrajectory[2].y, robot.shotTrajectory[2].z)
     glEnd()
-
-   
-
 
     #print (robot.shotTrajectory[0].imprime())
     #print (robot.shotTrajectory[1].imprime())
