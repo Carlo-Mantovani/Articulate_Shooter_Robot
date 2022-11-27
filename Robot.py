@@ -8,12 +8,13 @@ from Point import Point
 @dataclass(slots=True)
 class Robot:   
     id: int = field(init=False, default_factory=count().__next__)
-    pos: Point = Point(0,0,10)
-    escale: Point = field(init=False, default=Point(3,1,2))
+    pos: Point = Point(5,0,10)
     rotation: float = 0.0
+    escale: Point = field(init=False, default=Point(3,1,2))
     armEscale: int = field(init=False, default=Point(3,0.7,0.7))
-    armRotation: float = 0.0
-    speed: float = 0.25
+    armRotation: float = field(init=False, default=0.0)
+    speed: float = field(init=False, default=0.25) # como deixar em 2.5m/s?
+    shotStrenght: float = field(init=False, default=2)
     
     def move(self, direction: int): # direction should be 1 or -1
         vector = Point(1,0,0)
@@ -30,6 +31,12 @@ class Robot:
         glTranslatef(p.x, p.y, p.z)
         glRotatef(angle, 0,0,1)
         glTranslatef(-p.x, -p.y, -p.z)
+        
+    def drawShot(self):
+        glBegin(GL_LINES)
+        glVertex3f(0,0,0)
+        glVertex3f(self.armEscale.x/2+self.shotStrenght,0,0)
+        glEnd()
     
     def draw(self):
         glPushMatrix()
@@ -40,10 +47,11 @@ class Robot:
         glPushMatrix()
         glTranslatef(1,0.5,0)
         self.rotateAroundPoint(self.armRotation, Point(-1,0,0))
+        # Draw aim helper
+        self.drawShot()
         glScalef(self.armEscale.x,self.armEscale.y,self.armEscale.z)
-        
         glutSolidCube(1)
-        glPopMatrix()
+        glPopMatrix()        
         # Draw the tank
         glScalef(self.escale.x,self.escale.y,self.escale.z)
         glutSolidCube(1)

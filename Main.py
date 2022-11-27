@@ -258,14 +258,18 @@ ESCAPE = b'\x1b'
 def keyboard(*args):
     global image, MuroMatrix
     # If escape is pressed, kill everything.
-    if args[0] == b'm':
-        robot.rotateArm(1)
-    elif args[0] == b'n':
-        robot.rotateArm(-1)
+    if args[0] == b'a':
+        if (robot.shotStrenght > 1.5):
+            robot.shotStrenght -= 0.5
     if args[0] == b'd':
-        MuroMatrix[random.randint(0,14)][random.randint(0,24)] = False
+        if (robot.shotStrenght < 10):
+            robot.shotStrenght += 0.5
     if args[0] == b'i':
         image.show()
+    if args[0] == b's':
+        robot.rotateArm(-1)
+    if args[0] == b'w':
+        robot.rotateArm(1)
     if args[0] == b' ':
         init()
     if args[0] == ESCAPE:   # Termina o programa qdo
