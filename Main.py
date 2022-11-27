@@ -88,7 +88,7 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(-10, 5, 10, 5, 4, 10, 0, 1.0, 0)
+    gluLookAt(5, 4, 22, 5, 4, 10, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -258,8 +258,10 @@ ESCAPE = b'\x1b'
 def keyboard(*args):
     global image, MuroMatrix
     # If escape is pressed, kill everything.
-    if args[0] == b'a':
-        print (robot.rotation)
+    if args[0] == b'n':
+        robot.rotateArm(1)
+    elif args[0] == b'm':
+        robot.rotateArm(-1)
     if args[0] == b'd':
         MuroMatrix[random.randint(0,14)][random.randint(0,24)] = False
     if args[0] == b'i':
