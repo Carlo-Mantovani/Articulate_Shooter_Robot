@@ -10,9 +10,9 @@ class Robot:
     id: int = field(init=False, default_factory=count().__next__)
     pos: Point = Point(0,0,10)
     escale: Point = field(init=False, default=Point(3,1,2))
-    rotation: float = 180.0
-    armEscale: int = field(init=False, default=Point(0.5,2,0.5))
-    armRotation: float = 90.0
+    rotation: float = 0.0
+    armEscale: int = field(init=False, default=Point(3,0.7,0.7))
+    armRotation: float = 0.0
     speed: float = 0.25
     
     def move(self, direction: int): # direction should be 1 or -1
@@ -21,32 +21,31 @@ class Robot:
         self.pos = self.pos + vector * self.speed * direction    
         
     def rotateArm(self, direction: int): # direction should be 1 or -1
-        newAngle = abs(self.armRotation + 3 * direction) 
-        if (newAngle > 90 or newAngle < 15):
+        newAngle = self.armRotation + 3 * direction
+        if (newAngle < 0 or newAngle > 75):
             return
         self.armRotation = newAngle
+        
+    def rotateAroundPoint(self, angle: float, p: Point):
+        glTranslatef(p.x, p.y, p.z)
+        glRotatef(angle, 0,0,1)
+        glTranslatef(-p.x, -p.y, -p.z)
     
     def draw(self):
         glPushMatrix()
-        # Draw the tank
+        # Move to the position
         glTranslatef(self.pos.x,self.pos.y,self.pos.z)
         glRotatef(self.rotation,0,1,0)
-        glScalef(self.escale.x,self.escale.y,self.escale.z)
-        
-        glutSolidCube(1)
-        glPopMatrix()
-        
+        # Draw the arm
         glPushMatrix()
-        # Draw the first arm
-        glTranslatef(
-            self.pos.x,
-            self.pos.y+0.75,
-            self.pos.z
-            )
-        glRotatef(self.rotation,0,1,0)
-        glRotatef(self.armRotation,0,0,1)
-        
+        glTranslatef(1,0.5,0)
+        self.rotateAroundPoint(self.armRotation, Point(-1,0,0))
         glScalef(self.armEscale.x,self.armEscale.y,self.armEscale.z)
         
         glutSolidCube(1)
         glPopMatrix()
+        # Draw the tank
+        glScalef(self.escale.x,self.escale.y,self.escale.z)
+        glutSolidCube(1)
+        glPopMatrix()
+        

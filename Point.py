@@ -46,7 +46,7 @@ class Point:
         y = self.x * math.sin(radAngle) + self.y * math.cos(radAngle)
         self.x = x
         self.y = y
-            
+                 
     # Definicao de operadores
     # https://www.programiz.com/python-programming/operator-overloading
     def __add__(self, other):
