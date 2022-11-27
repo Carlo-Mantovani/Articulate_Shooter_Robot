@@ -88,7 +88,7 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(-10, 3, 10, 5, 4, 10, 0, 1.0, 0)
+    gluLookAt(-10, 5, 10, 5, 4, 10, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -218,23 +218,6 @@ def display():
 
     DesenhaPiso()
     DesenhaMuro()
-
-    Textures.UseTexture(-1, Texturas)  # desabilita o uso de texturas
-    # Desenha um cubo vermelho à esquerda
-    glColor3f(0.5, 0.0, 0.0)  # Vermelho
-    glPushMatrix()
-    glTranslatef(20, 0, 0)
-    glRotatef(Angulo, 0, 1, 0)
-    DesenhaCubo()
-    glPopMatrix()
-
-    # Desenha um cubo amarelo à direita
-    glColor3f(0.5, 0.5, 0.0)  # Amarelo
-    glPushMatrix()
-    glTranslatef(30, 0, 10)
-    glRotatef(-Angulo, 0, 1, 0)
-    # DesenhaCubo()
-    glPopMatrix()
     
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.draw()
@@ -275,7 +258,8 @@ ESCAPE = b'\x1b'
 def keyboard(*args):
     global image, MuroMatrix
     # If escape is pressed, kill everything.
-
+    if args[0] == b'a':
+        print (robot.rotation)
     if args[0] == b'd':
         MuroMatrix[random.randint(0,14)][random.randint(0,24)] = False
     if args[0] == b'i':
@@ -293,17 +277,26 @@ def keyboard(*args):
 # **********************************************************************
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        if(robot.pos.x < tamX-1 and robot.pos.z < tamZ-1):
             robot.move(1)
+            if(not isInside()):
+                robot.move(-1)
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        if(robot.pos.x > 0 and robot.pos.z > 0):
             robot.move(-1)
+            if (not isInside()):
+                robot.move(1)
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
         robot.rotation += 3
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         robot.rotation -= 3
 
     glutPostRedisplay()
+
+def isInside():
+    delta = robot.escale.x/2
+    return robot.pos.x >= delta and \
+           robot.pos.x < tamX-delta and \
+           robot.pos.z >= 0 and \
+           robot.pos.z < tamZ-1
 
 def mouse(button: int, state: int, x: int, y: int):
     glutPostRedisplay()
