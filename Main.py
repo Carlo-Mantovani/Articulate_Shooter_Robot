@@ -20,6 +20,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from Robot import Robot
 from Point import Point
+from Bezier import *
 import Textures
 
 import time
@@ -32,6 +33,8 @@ tamX = 50
 tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
+curva = Bezier()
+
 
 robot = Robot()
 # ***********************************************
@@ -192,6 +195,11 @@ def DesenhaPiso():
     glEnd()
     glPopMatrix()
 
+def CriaTrajetoria():
+    global curva
+    curva = Bezier(robot.shotTrajectory[0], robot.shotTrajectory[1], robot.shotTrajectory[2])
+    curva.Traca()
+
 # **********************************************************************
 def DesenhaMuro():
     Textures.UseTexture(1, Texturas)
@@ -212,7 +220,7 @@ def display():
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
    
-    CalculaPonto(Point(0,0,0))
+
 
     DefineLuz()
     PosicUser()
@@ -224,8 +232,19 @@ def display():
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
     robot.shoot()
+    CriaTrajetoria()
+    glBegin(GL_LINES)
+    glVertex3f(robot.shotTrajectory[0].x, robot.shotTrajectory[0].y, robot.shotTrajectory[0].z)
+    glVertex3f(robot.shotTrajectory[1].x, robot.shotTrajectory[1].y, robot.shotTrajectory[1].z)
+    glEnd()
+    glBegin(GL_LINES)
+    glVertex3f(robot.shotTrajectory[1].x, robot.shotTrajectory[1].y, robot.shotTrajectory[1].z)
+    glVertex3f(robot.shotTrajectory[2].x, robot.shotTrajectory[2].y, robot.shotTrajectory[2].z)
+    glEnd()
 
-    print("")
+   
+
+
     #print (robot.shotTrajectory[0].imprime())
     #print (robot.shotTrajectory[1].imprime())
     #print (robot.shotTrajectory[2].imprime())
