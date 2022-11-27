@@ -5,6 +5,7 @@ from itertools import count
 from dataclasses import dataclass, field
 from Point import Point
 
+
 @dataclass(slots=True)
 class Robot:   
     id: int = field(init=False, default_factory=count().__next__)
@@ -15,7 +16,27 @@ class Robot:
     armRotation: float = field(init=False, default=0.0)
     speed: float = field(init=False, default=0.25) # como deixar em 2.5m/s?
     shotStrenght: float = field(init=False, default=2)
-    
+    shotTrajectory = [Point]*3
+
+    def CalculaPonto(self, p: Point) -> Point:
+        ponto_novo = [0, 0, 0, 0]
+
+        mvmatrix = glGetDoublev(GL_MODELVIEW_MATRIX)
+        for i in range(0, 4):
+            ponto_novo[i] = mvmatrix[0][i] * p.x + \
+                mvmatrix[1][i] * p.y + \
+                mvmatrix[2][i] * p.z + \
+                mvmatrix[3][i]
+
+       
+        x = ponto_novo[0]
+        y = ponto_novo[1]
+        z = -ponto_novo[2]
+     
+
+        return Point(x, y, z)      
+
+   
     def move(self, direction: int): # direction should be 1 or -1
         vector = Point(1,0,0)
         vector.rotateY(self.rotation)
@@ -47,6 +68,7 @@ class Robot:
         glTranslatef(self.armEscale.x/2+self.shotStrenght,0,0)
         angle = -1 * (90 - self.armRotation)
         glRotatef(angle,0,0,1)
+        self.shotTrajectory[2] = self.CalculaPonto(Point(self.armEscale.x/2+self.shotStrenght,0,0))
         self.drawShot()
         glPopMatrix()
         glPopMatrix()
@@ -60,7 +82,10 @@ class Robot:
     def drawTank(self):
         self.defineCoordenates()
         # Draw aim helper
+        self.shotTrajectory[0] = self.CalculaPonto(Point(0,0,0))
+        self.shotTrajectory[1] = self.CalculaPonto(Point(self.armEscale.x/2+self.shotStrenght,0,0))
         self.drawShot()
+        
         # Draw the arm
         glScalef(self.armEscale.x,self.armEscale.y,self.armEscale.z)
         glutSolidCube(1)

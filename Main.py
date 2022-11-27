@@ -211,6 +211,8 @@ def display():
     global Angulo
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+   
+    CalculaPonto(Point(0,0,0))
 
     DefineLuz()
     PosicUser()
@@ -222,6 +224,11 @@ def display():
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
     robot.shoot()
+
+    print("")
+    #print (robot.shotTrajectory[0].imprime())
+    #print (robot.shotTrajectory[1].imprime())
+    #print (robot.shotTrajectory[2].imprime())
 
     Angulo = Angulo + 1
     glutSwapBuffers()
