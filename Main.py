@@ -293,18 +293,15 @@ def keyboard(*args):
 # **********************************************************************
 def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        if(robot.pos.x < tamX-1):
-            robot.pos.x += 1 * (math.sin(math.radians(robot.rotation)))
-            robot.pos.z += 1 * (math.cos(math.radians(robot.rotation)))
-         
+        if(robot.pos.x < tamX-1 and robot.pos.z < tamZ-1):
+            robot.move(1)
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        if(robot.pos.x > 0):
-            robot.pos.x -= 1 * (math.sin(math.radians(robot.rotation)))
-            robot.pos.z -= 1 * (math.cos(math.radians(robot.rotation)))
+        if(robot.pos.x > 0 and robot.pos.z > 0):
+            robot.move(-1)
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        robot.rotation += 0.5
+        robot.rotation += 3
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        robot.rotation -= 0.5
+        robot.rotation -= 3
 
     glutPostRedisplay()
 

@@ -10,8 +10,14 @@ class Robot:
     id: int = field(init=False, default_factory=count().__next__)
     pos: Point = Point(20,0,10)
     escale: Point = field(init=False, default=Point(3,1,2))
+    armHeight: int = field(init=False, default=3)
     rotation: float = 0.0
-    armHeight: int = 2
+    speed: float = 0.25
+    
+    def move(self, direction: int):
+        vetor = Point(1,0,0)
+        vetor.rotateY(self.rotation)
+        self.pos = self.pos + vetor * self.speed * direction
     
     def draw(self):
         glPushMatrix()
@@ -26,7 +32,7 @@ class Robot:
         glPushMatrix()
         # Draw the first arm
         glTranslatef(
-            self.pos.x-1,
+            self.pos.x,
             self.pos.y+self.escale.y,
             self.pos.z
             )
@@ -34,17 +40,4 @@ class Robot:
         glScalef(1,self.armHeight,1)
         
         glutSolidCube(0.5)
-        glPopMatrix()
-        
-        glPushMatrix()
-        # Draw the second arm
-        glTranslatef(
-            self.pos.x-1,
-            self.pos.y+self.escale.y+0.70,
-            self.pos.z
-            )
-        glRotatef(self.rotation,0,1,0)
-        glScalef(1,self.armHeight,1)
-        
-        glutSolidCube(0.25)
         glPopMatrix()
