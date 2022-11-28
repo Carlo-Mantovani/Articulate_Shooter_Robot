@@ -82,6 +82,7 @@ def init():
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
     global triObject
     triObject.readTriObject()
+    #DesenhaTri()
 
 # **********************************************************************
 #
@@ -207,15 +208,17 @@ def CriaTrajetoria():
 def DesenhaTri():
     global triObject
     glPushMatrix()
-    glTranslatef(10, 5, 10)
+    glTranslatef(10, 1, 15)
+    glScalef(0.01,0.01,0.01)
     #print(len(triObject.vertices))
     for i in range (len(triObject.vertices)):
         glBegin(GL_TRIANGLES)
        
         for j in range (len(triObject.vertices[i])):
-            hexa = triObject.vertices[i][3][2:]
-            hexaInt = int(hexa, 16)
-            glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
+            if j == 0:
+                hexa = triObject.vertices[i][3][2:]
+                hexaInt = int(hexa, 16)
+                glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
             if (j != 3):
                 glVertex3f(triObject.vertices[i][j].x, triObject.vertices[i][j].y, triObject.vertices[i][j].z)
         glEnd()
@@ -237,6 +240,7 @@ def DesenhaMuro():
 # display()
 #   Funcao que exibe os desenhos na tela
 # **********************************************************************
+
 def display():
     global Angulo
     # Limpa a tela com  a cor de fundo
