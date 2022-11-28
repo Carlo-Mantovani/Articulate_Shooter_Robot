@@ -21,6 +21,7 @@ from OpenGL.GLU import *
 from Robot import Robot
 from Point import Point
 from Bezier import *
+from Tri import *
 import Textures
 
 import time
@@ -35,6 +36,7 @@ MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 
 curva = Bezier()
 robot = Robot()
+triObject = Tri()
 # ***********************************************
 #  Ponto calcula_ponto(Ponto p, Ponto &out)
 #
@@ -78,6 +80,9 @@ def init():
     global Texturas
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
+    global triObject
+    triObject.readTriObject()
+
 # **********************************************************************
 #
 # **********************************************************************
@@ -199,6 +204,24 @@ def CriaTrajetoria():
     curva = Bezier(robot.shotTrajectory[0], robot.shotTrajectory[1], robot.shotTrajectory[2])
     # curva.Traca()
 
+def DesenhaTri():
+    global triObject
+    glPushMatrix()
+    glTranslatef(10, 5, 10)
+    #print(len(triObject.vertices))
+    for i in range (len(triObject.vertices)):
+        glBegin(GL_TRIANGLES)
+       
+        for j in range (len(triObject.vertices[i])):
+            hexa = triObject.vertices[i][3][2:]
+            hexaInt = int(hexa, 16)
+            glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
+            if (j != 3):
+                glVertex3f(triObject.vertices[i][j].x, triObject.vertices[i][j].y, triObject.vertices[i][j].z)
+        glEnd()
+    glPopMatrix()
+
+
 # **********************************************************************
 def DesenhaMuro():
     Textures.UseTexture(1, Texturas)
@@ -225,6 +248,7 @@ def display():
 
     DesenhaPiso()
     DesenhaMuro()
+    DesenhaTri()
     
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
