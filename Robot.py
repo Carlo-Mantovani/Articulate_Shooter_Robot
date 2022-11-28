@@ -16,6 +16,7 @@ class Robot:
     speed: float = field(init=False, default=0.25)  # como deixar em 2.5m/s?
     shotStrenght: float = field(init=False, default=2)
     shotTrajectory: list[Point] = field(init=False, default_factory=list)
+    robotDirection: Point = Point(1, 0, 0)
 
     def __post_init__(self) -> None:
         self.shotTrajectory = [Point(0, 0, 0), Point(0, 0, 0), Point(0, 0, 0)]
@@ -79,18 +80,18 @@ class Robot:
         glPopMatrix()
 
     def drawShot(self, modo) -> None:
+        if modo == 1:
+            self.shotTrajectory[0] = self.CalculaPonto(Point(0, 0, 0))
+            self.shotTrajectory[1] = self.CalculaPonto(
+                Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
+
+        if modo == 2:
+            self.shotTrajectory[2] = self.CalculaPonto(
+                Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
         glVertex3f(self.armEscale.x/2+self.shotStrenght, 0, 0)
         glEnd()
-
-        # if modo == 1:
-        #     self.shotTrajectory[0] = self.CalculaPonto(Point(0, 0, 0))
-        #     self.shotTrajectory[1] = self.CalculaPonto(
-        #         Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
-        # if modo == 2:
-        #     self.shotTrajectory[2] = self.CalculaPonto(
-        #         Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
 
     def drawTank(self) -> None:
         self.defineCoordenates()
