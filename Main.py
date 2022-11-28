@@ -193,10 +193,11 @@ def DesenhaPiso():
     glEnd()
     glPopMatrix()
 
+# **********************************************************************
 def CriaTrajetoria():
     global curva
     curva = Bezier(robot.shotTrajectory[0], robot.shotTrajectory[1], robot.shotTrajectory[2])
-    curva.Traca()
+    # curva.Traca()
 
 # **********************************************************************
 def DesenhaMuro():
@@ -232,10 +233,6 @@ def display():
     CriaTrajetoria()
     glBegin(GL_LINES)
     glVertex3f(robot.shotTrajectory[0].x, robot.shotTrajectory[0].y, robot.shotTrajectory[0].z)
-    glVertex3f(robot.shotTrajectory[1].x, robot.shotTrajectory[1].y, robot.shotTrajectory[1].z)
-    glEnd()
-    glBegin(GL_LINES)
-    glVertex3f(robot.shotTrajectory[1].x, robot.shotTrajectory[1].y, robot.shotTrajectory[1].z)
     glVertex3f(robot.shotTrajectory[2].x, robot.shotTrajectory[2].y, robot.shotTrajectory[2].z)
     glEnd()
 

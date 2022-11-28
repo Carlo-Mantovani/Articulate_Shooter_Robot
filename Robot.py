@@ -58,36 +58,39 @@ class Robot:
         # Move to the position
         glTranslatef(self.pos.x, self.pos.y, self.pos.z)
         glRotatef(self.rotation, 0, 1, 0)
-
         # Draw the arm
         glPushMatrix()
         glTranslatef(1, 0.5, 0)
         self.rotateAroundPoint(self.armRotation, Point(-1, 0, 0))
+        
+        self.shotTrajectory[0] = self.CalculaPonto(Point(0, 0, 0))
 
     def shoot(self) -> None:
         self.defineCoordenates()
         glTranslatef(self.armEscale.x/2+self.shotStrenght, 0, 0)
+        self.shotTrajectory[1] = self.CalculaPonto(Point(0, 0, 0))
+        
         angle = -1 * (90 - self.armRotation)
         glRotatef(angle, 0, 0, 1)
-        #self.shotTrajectory[2] = self.CalculaPonto(Point(self.armEscale.x/2+self.shotStrenght,0,0))
+        self.shotTrajectory[2] = self.CalculaPonto(Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
+        
         self.drawShot(2)
         glPopMatrix()
         glPopMatrix()
 
     def drawShot(self, modo) -> None:
-
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
         glVertex3f(self.armEscale.x/2+self.shotStrenght, 0, 0)
         glEnd()
 
-        if modo == 1:
-            self.shotTrajectory[0] = self.CalculaPonto(Point(0, 0, 0))
-            self.shotTrajectory[1] = self.CalculaPonto(
-                Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
-        if modo == 2:
-            self.shotTrajectory[2] = self.CalculaPonto(
-                Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
+        # if modo == 1:
+        #     self.shotTrajectory[0] = self.CalculaPonto(Point(0, 0, 0))
+        #     self.shotTrajectory[1] = self.CalculaPonto(
+        #         Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
+        # if modo == 2:
+        #     self.shotTrajectory[2] = self.CalculaPonto(
+        #         Point(self.armEscale.x/2+self.shotStrenght, 0, 0))
 
     def drawTank(self) -> None:
         self.defineCoordenates()
