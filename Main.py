@@ -95,8 +95,8 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    #gluLookAt(5, 4, 22, 5, 4, 10, 0, 1.0, 0)
-    gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
+    gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
+    # gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -241,24 +241,29 @@ def DesenhaMuro():
 
 def cannonPosition():
     glPushMatrix()
-    posicaoCanhao = robot.pos + Point(3,0.7,0.7)
+    glRotatef(robot.rotation,0,1,0)
+    posicaoCanhao = robot.pos + Point(2,0.5,0)
     glTranslatef(posicaoCanhao.x, posicaoCanhao.y, posicaoCanhao.z)
     glutSolidCube(1)
     glPopMatrix()
+
     pointB = posicaoCanhao + robot.robotDirection * robot.shotStrenght
     distance = 2 * robot.shotStrenght * math.cos(robot.armRotation*math.pi/180)
     pointC = posicaoCanhao + Point(distance,0,0)
     pointC.rotateY(robot.rotation)
     curve = Bezier(posicaoCanhao, pointB, pointC)
     curve.Traca()
+    
     glPushMatrix()
     glTranslatef(pointB.x, pointB.y, pointB.z)
     glutSolidCube(1)
     glPopMatrix()
+    
     glPushMatrix()
     glTranslatef(pointC.x, pointC.y, pointC.z)
     glutSolidCube(1)
     glPopMatrix()
+    
     #glBegin(GL_TRIANGLES)
     #glColor3f(1, 0, 0)
     #glVertex3f(posicaoCanhao.x, posicaoCanhao.y, posicaoCanhao.z)
@@ -284,10 +289,9 @@ def display():
 
     glMatrixMode(GL_MODELVIEW)
 
-    glTranslatef(-25,0,0)
     DesenhaPiso()
-    #DesenhaMuro()
-    DesenhaTri()
+    DesenhaMuro()
+    # DesenhaTri()
     
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
@@ -352,11 +356,13 @@ def keyboard(*args):
     if args[0] == b'i':
         image.show()
     if args[0] == b's':
+        aux = robot.armRotation
         robot.rotateArm(-1)
-        robot.robotDirection.rotateZ(robot.armRotation)
+        rotationF()
     if args[0] == b'w':
+        aux = robot.armRotation
         robot.rotateArm(1)
-        robot.robotDirection.rotateZ(robot.armRotation)
+        rotationF()
     if args[0] == b' ':
         init()
     if args[0] == ESCAPE:   # Termina o programa qdo
@@ -379,12 +385,17 @@ def arrow_keys(a_keys: int, x: int, y: int):
                 robot.move(1)
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
         robot.rotation += 3
-        robot.robotDirection.rotateY(robot.rotation)
+        rotationF()
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         robot.rotation -= 3
-        robot.robotDirection.rotateY(robot.rotation)
+        rotationF()
 
     glutPostRedisplay()
+
+def rotationF ():
+    robot.robotDirection = Point(1,0,0)
+    robot.robotDirection.rotateY(robot.rotation)
+    robot.robotDirection.rotateZ(robot.armRotation)
 
 def isInside():
     delta = robot.escale.x/2
