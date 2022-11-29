@@ -14,10 +14,12 @@
 #   http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GLUT
 #
 # ***********************************************************************************
+import random
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from Robot import Robot
+# from Robot import Robot
+from RobotC import Robot
 from Point import Point
 from Bezier import *
 from Tri import *
@@ -38,7 +40,9 @@ shooting = False # flag to control shooting in display
 
 curve = Bezier()
 robot = Robot()
-triObject = Tri()
+triObjectA = Tri()
+triObjectE = Tri()
+triQuantity = 5
 # **********************************************************************
 #  init()
 #  Inicializa os parametros globais de OpenGL
@@ -59,8 +63,9 @@ def init():
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
     
-    triObject.readTriObject()
-    #DesenhaTri()
+    triObjectA.readTriObject("tri/sheep.tri")
+    triObjectE.readTriObject("tri/sheep.tri")
+    defineTriPos(triQuantity)
 
 # **********************************************************************
 #
@@ -72,8 +77,8 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
-    # gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
+    # gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
+    gluLookAt(0, 5, 12, 25, 5, 12, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -125,7 +130,6 @@ def DefineLuz():
 #   Desenha o cenario
 # **********************************************************************
 def DesenhaCubo():
-
     glPushMatrix()
     glEnable(GL_TEXTURE_GEN_S)
     glEnable(GL_TEXTURE_GEN_T)
@@ -169,24 +173,37 @@ def DesenhaPiso():
     glPopMatrix()
 
 # **********************************************************************
-def DesenhaTri():
-    global triObject
-    glPushMatrix()
-    glTranslatef(10, 1, 15)
-    #glScalef(0.01,0.01,0.01)
-    glScalef(5,5,5)
+def defineTriPos(quantity):
+    global triObjectA, triObjectE
+    for i in range(quantity):
+        triObjectA.positions.append(Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)))
+        triObjectE.positions.append(Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)))
+
     
-    for i in range (len(triObject.vertices)):
-        glBegin(GL_TRIANGLES)
-       
-        for j in range (len(triObject.vertices[i])):
-            if j == 0:
-                hexa = triObject.vertices[i][3][2:]
-                hexaInt = int(hexa, 16)
-                glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
-            if (j != 3):
-                glVertex3f(triObject.vertices[i][j].x, triObject.vertices[i][j].y, triObject.vertices[i][j].z)
-        glEnd()
+def DesenhaTri(triObject, type): #aplicar translacao e scale sob min max 
+    
+    glPushMatrix()
+    glScalef(2,2,2)
+    if type == 0:
+        glColor3f(0,1,0)
+    else:
+        glColor3f(1,0,0)
+    for n in range (triQuantity):
+        glPushMatrix()
+        glTranslatef(triObject.positions[n].x, triObject.positions[n].y, triObject.positions[n].z)
+        
+        for i in range (len(triObject.vertices)):
+            glBegin(GL_TRIANGLES)
+        
+            for j in range (len(triObject.vertices[i])):
+                #if j == 0:
+                #    hexa = triObject.vertices[i][3][2:]
+                #    hexaInt = int(hexa, 16)
+                #    glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
+                if (j != 3):
+                    glVertex3f(triObject.vertices[i][j].x, triObject.vertices[i][j].y, triObject.vertices[i][j].z)
+            glEnd()
+        glPopMatrix()
     glPopMatrix()
 
 # **********************************************************************
@@ -201,7 +218,7 @@ def DesenhaMuro():
                 glPopMatrix()
 
 # **********************************************************************
-def cannonPosition():
+def trajectoryPosition():
     posicaoCanhao = robot.pos + Point(0, 0.7, 0)
 
     pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrenght    
@@ -223,7 +240,7 @@ def shoot():
     parameterT += deltaT
     point = curve.Calcula(parameterT)
     
-    if (parameterT >= 1):
+    if (parameterT >= 1 or collideWall(point)):
         shooting = False
         parameterT = 0
     
@@ -233,7 +250,25 @@ def shoot():
     glutSolidSphere(0.3, 10, 10)
     glPopMatrix()
 
-
+def collideWall(point: Point) -> bool:
+     for i in range (tamY):
+        for j in range (tamZ):
+            if not MuroMatrix[i][j]:
+                continue
+            else:
+                if (point.x >= tamX/2 and 
+                    point.x <= tamX/2 + 1 and 
+                    point.y >= i and 
+                    point.y <= i + 1 and 
+                    point.z >= j and 
+                    point.z <= j + 1
+                ):
+                    for k in range (-1,2):
+                        for l in range (-1,2):
+                            if (i+ k >= 0 and i + k < tamY and j + l >= 0 and j + l < tamZ):
+                                MuroMatrix[i+k][j+l] = False
+                    return True
+     
 # **********************************************************************
 # display()
 #   Funcao que exibe os desenhos na tela
@@ -242,20 +277,21 @@ def display():
     global Angulo
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glMatrixMode(GL_MODELVIEW)
    
     DefineLuz()
     PosicUser()
 
-    glMatrixMode(GL_MODELVIEW)
-
     DesenhaPiso()
     DesenhaMuro()
-    #DesenhaTri()
+    DesenhaTri(triObjectA,0)
+    DesenhaTri(triObjectE,1)
     
     robot.drawTank()
 
+    # if shot is not in movement, reposition cannon trajectory
     if (not shooting):
-        cannonPosition()
+        trajectoryPosition()
 
     if(shooting):
         shoot()

@@ -1,19 +1,18 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from dataclasses import dataclass
 from Point import Point
 
-@dataclass(slots=True)
 class Robot:
-    pos:             Point = Point(5, 0, 10)
-    rotation:        float = 0.0
-    escale:          Point = Point(3, 1, 2)
-    speed:           float = 0.25
-    cannonEscale:    int   = Point(3, 0.7, 0.7)
-    cannonRotation:  float = 0.0
-    cannonDirection: Point = Point(1, 0, 0)
-    shotStrenght:    float = 10
+    def __init__(self) -> None:
+        self.pos:             Point = Point(5, 0, 10)
+        self.rotation:        float = 0.0
+        self.escale:          Point = Point(3, 1, 2)
+        self.speed:           float = 0.25
+        self.cannonEscale:    int   = Point(3, 0.7, 0.7)
+        self.cannonRotation:  float = 0.0
+        self.cannonDirection: Point = Point(1, 0, 0)
+        self.shotStrenght:    float = 10
 
     def move(self, direction: int) -> None:  # direction should be 1 or -1
         vector = Point(1, 0, 0)
