@@ -14,6 +14,7 @@
 #   http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GLUT
 #
 # ***********************************************************************************
+import random
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -39,7 +40,9 @@ shooting = False # flag to control shooting in display
 
 curve = Bezier()
 robot = Robot()
-triObject = Tri()
+triObjectA = Tri()
+triObjectE = Tri()
+triQuantity = 5
 # **********************************************************************
 #  init()
 #  Inicializa os parametros globais de OpenGL
@@ -60,7 +63,9 @@ def init():
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
     
-    triObject.readTriObject()
+    triObjectA.readTriObject("tri/sheep.tri")
+    triObjectE.readTriObject("tri/sheep.tri")
+    defineTriPos(triQuantity)
 
 # **********************************************************************
 #
@@ -168,24 +173,37 @@ def DesenhaPiso():
     glPopMatrix()
 
 # **********************************************************************
-def DesenhaTri():
-    global triObject
-    glPushMatrix()
-    glTranslatef(10, 1, 15)
-    #glScalef(0.01,0.01,0.01)
-    glScalef(5,5,5)
+def defineTriPos(quantity):
+    global triObjectA, triObjectE
+    for i in range(quantity):
+        triObjectA.positions.append(Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)))
+        triObjectE.positions.append(Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)))
+
     
-    for i in range (len(triObject.vertices)):
-        glBegin(GL_TRIANGLES)
-       
-        for j in range (len(triObject.vertices[i])):
-            if j == 0:
-                hexa = triObject.vertices[i][3][2:]
-                hexaInt = int(hexa, 16)
-                glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
-            if (j != 3):
-                glVertex3f(triObject.vertices[i][j].x, triObject.vertices[i][j].y, triObject.vertices[i][j].z)
-        glEnd()
+def DesenhaTri(triObject, type): #aplicar translacao e scale sob min max 
+    
+    glPushMatrix()
+    glScalef(2,2,2)
+    if type == 0:
+        glColor3f(0,1,0)
+    else:
+        glColor3f(1,0,0)
+    for n in range (triQuantity):
+        glPushMatrix()
+        glTranslatef(triObject.positions[n].x, triObject.positions[n].y, triObject.positions[n].z)
+        
+        for i in range (len(triObject.vertices)):
+            glBegin(GL_TRIANGLES)
+        
+            for j in range (len(triObject.vertices[i])):
+                #if j == 0:
+                #    hexa = triObject.vertices[i][3][2:]
+                #    hexaInt = int(hexa, 16)
+                #    glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
+                if (j != 3):
+                    glVertex3f(triObject.vertices[i][j].x, triObject.vertices[i][j].y, triObject.vertices[i][j].z)
+            glEnd()
+        glPopMatrix()
     glPopMatrix()
 
 # **********************************************************************
@@ -266,7 +284,8 @@ def display():
 
     DesenhaPiso()
     DesenhaMuro()
-    # DesenhaTri()
+    DesenhaTri(triObjectA,0)
+    DesenhaTri(triObjectE,1)
     
     robot.drawTank()
 
