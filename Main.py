@@ -37,32 +37,6 @@ MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 curva = Bezier()
 robot = Robot()
 triObject = Tri()
-# ***********************************************
-#  Ponto calcula_ponto(Ponto p, Ponto &out)
-#
-#  Esta funcao calcula as coordenadas
-#  de um ponto no sistema de referencia da
-#  camera (SRC), ou seja, aplica as rotaçcoes,
-#  escalas e translacoes a um ponto no sistema
-#  de referencia do objeto SRO.
-#  Para maiores detalhes, veja a pagina
-#  https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/Interseccao/ExerciciosDeInterseccao.html
-def CalculaPonto(p: Point) -> Point:
-    ponto_novo = [0, 0, 0, 0]
-
-    mvmatrix = glGetDoublev(GL_MODELVIEW_MATRIX)
-    for i in range(0, 4):
-        ponto_novo[i] = mvmatrix[0][i] * p.x + \
-            mvmatrix[1][i] * p.y + \
-            mvmatrix[2][i] * p.z + \
-            mvmatrix[3][i]
-
-    x = ponto_novo[0]
-    y = ponto_novo[1]
-    z = -ponto_novo[2]
-    
-    return Point(x, y, z)           
-
 # **********************************************************************
 #  init()
 #  Inicializa os parametros globais de OpenGL
@@ -96,7 +70,7 @@ def PosicUser():
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
-    # gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
+    #gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -201,17 +175,12 @@ def DesenhaPiso():
     glPopMatrix()
 
 # **********************************************************************
-def CriaTrajetoria():
-    global curva
-    curva = Bezier(robot.shotTrajectory[0], robot.shotTrajectory[1], robot.shotTrajectory[2])
-    # curva.Traca()
-
 def DesenhaTri():
     global triObject
     glPushMatrix()
     glTranslatef(10, 1, 15)
     glScalef(0.01,0.01,0.01)
-    #print(len(triObject.vertices))
+    
     for i in range (len(triObject.vertices)):
         glBegin(GL_TRIANGLES)
        
@@ -225,7 +194,6 @@ def DesenhaTri():
         glEnd()
     glPopMatrix()
 
-
 # **********************************************************************
 def DesenhaMuro():
     Textures.UseTexture(1, Texturas)
@@ -237,48 +205,22 @@ def DesenhaMuro():
                 DesenhaCubo()
                 glPopMatrix()
 
-
-
+# **********************************************************************
 def cannonPosition():
-    glPushMatrix()
-    glRotatef(robot.rotation,0,1,0)
-    posicaoCanhao = robot.pos + Point(2,0.5,0)
-    glTranslatef(posicaoCanhao.x, posicaoCanhao.y, posicaoCanhao.z)
-    glutSolidCube(1)
-    glPopMatrix()
+    posicaoCanhao = robot.pos + Point(0, 0.8, 0)
 
-    pointB = posicaoCanhao + robot.robotDirection * robot.shotStrenght
-    distance = 2 * robot.shotStrenght * math.cos(robot.armRotation*math.pi/180)
-    pointC = posicaoCanhao + Point(distance,0,0)
-    pointC.rotateY(robot.rotation)
+    pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrenght
+    
+    pointC = posicaoCanhao + robot.cannonDirection * robot.shotStrenght*2
+    pointC.y = 0
+    
     curve = Bezier(posicaoCanhao, pointB, pointC)
     curve.Traca()
-    
-    glPushMatrix()
-    glTranslatef(pointB.x, pointB.y, pointB.z)
-    glutSolidCube(1)
-    glPopMatrix()
-    
-    glPushMatrix()
-    glTranslatef(pointC.x, pointC.y, pointC.z)
-    glutSolidCube(1)
-    glPopMatrix()
-    
-    #glBegin(GL_TRIANGLES)
-    #glColor3f(1, 0, 0)
-    #glVertex3f(posicaoCanhao.x, posicaoCanhao.y, posicaoCanhao.z)
-    #glVertex3f(pointB.x, pointB.y, pointB.z)
-    #glVertex3f(pointC.x, pointC.y, pointC.z)
-    #glEnd()
-
-
-
 
 # **********************************************************************
 # display()
 #   Funcao que exibe os desenhos na tela
 # **********************************************************************
-
 def display():
     global Angulo
     # Limpa a tela com  a cor de fundo
@@ -290,26 +232,14 @@ def display():
     glMatrixMode(GL_MODELVIEW)
 
     DesenhaPiso()
-    DesenhaMuro()
+    # DesenhaMuro()
     # DesenhaTri()
     
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
     #glColor3f(0.0,1,0.0)
-    robot.shoot()
 
     cannonPosition()
-    
-    CriaTrajetoria()
-    glBegin(GL_LINES)
-    glVertex3f(robot.shotTrajectory[0].x, robot.shotTrajectory[0].y, robot.shotTrajectory[0].z)
-    glVertex3f(robot.shotTrajectory[2].x, robot.shotTrajectory[2].y, robot.shotTrajectory[2].z)
-    glEnd()
-
-    
-    print (robot.shotTrajectory[0].imprime())
-    print (robot.shotTrajectory[1].imprime())
-    print (robot.shotTrajectory[2].imprime())
 
     Angulo = Angulo + 1
     glutSwapBuffers()
@@ -348,19 +278,17 @@ def keyboard(*args):
     global image, MuroMatrix
     # If escape is pressed, kill everything.
     if args[0] == b'a':
-        if (robot.shotStrenght > 1.5):
+        if (robot.shotStrenght > 3):
             robot.shotStrenght -= 0.5
     if args[0] == b'd':
-        if (robot.shotStrenght < 10):
+        if (robot.shotStrenght < 30):
             robot.shotStrenght += 0.5
     if args[0] == b'i':
         image.show()
     if args[0] == b's':
-        aux = robot.armRotation
         robot.rotateArm(-1)
         rotationF()
     if args[0] == b'w':
-        aux = robot.armRotation
         robot.rotateArm(1)
         rotationF()
     if args[0] == b' ':
@@ -392,11 +320,13 @@ def arrow_keys(a_keys: int, x: int, y: int):
 
     glutPostRedisplay()
 
+# ***********************************************************************************
 def rotationF ():
-    robot.robotDirection = Point(1,0,0)
-    robot.robotDirection.rotateY(robot.rotation)
-    robot.robotDirection.rotateZ(robot.armRotation)
-
+    robot.cannonDirection = Point(1,0,0)
+    robot.cannonDirection.rotateZ(robot.armRotation)
+    robot.cannonDirection.rotateY(robot.rotation)
+ 
+# ***********************************************************************************
 def isInside():
     delta = robot.escale.x/2
     return robot.pos.x >= delta and \
@@ -404,9 +334,11 @@ def isInside():
            robot.pos.z >= 0 and \
            robot.pos.z < tamZ-1
 
+# ***********************************************************************************
 def mouse(button: int, state: int, x: int, y: int):
     glutPostRedisplay()
 
+# ***********************************************************************************
 def mouseMove(x: int, y: int):
     glutPostRedisplay()
 
