@@ -1,4 +1,3 @@
-
 from Point import Point
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -13,21 +12,15 @@ class Bezier:
         self.Coords += [p1]
         self.Coords += [p2]
         conexoes = [[Bezier]]
-      
-        #P = self.Coords[0]
-        #P.imprime()
 
     def __init__(self, *args:Point):
-        #print ("Construtora da Bezier")
         self.ComprimentoTotalDaCurva = 0.0
         self.Coords = []
         self.conexoes = [[]]
         self.indice = 0
-        #print (args)
+
         for i in args:
             self.Coords.append(i)
-        #P = self.Coords[2]
-        #P.imprime()
 
     def Calcula(self, t):
         UmMenosT = 1-t
@@ -35,8 +28,7 @@ class Bezier:
         P = self.Coords[0] * UmMenosT * UmMenosT + self.Coords[1] * 2 * UmMenosT * t + self.Coords[2] * t*t
         return P
    
-
-    def Traca(self):     
+    def Traca(self) -> None:     
         t=0.0
         DeltaT = 1.0/50
         P = Point
@@ -50,8 +42,8 @@ class Bezier:
         glVertex3f(P.x, P.y,P.z)
         
         glEnd()
-    def CalculaComprimento(self):
-        
+
+    def CalculaComprimento(self) -> float:
         DeltaT = 1.0/50
         t = DeltaT
         P1,P2 = Point,Point
@@ -64,8 +56,9 @@ class Bezier:
             t+=DeltaT
         P2 = self.Calcula(1.0)
         self.ComprimentoTotalDaCurva += distancia(P1,P2)
+        return self.ComprimentoTotalDaCurva
 
-def distancia(p1:Point, p2:Point):
+def distancia(p1:Point, p2:Point) -> Point:
     return ((p1.x-p2.x)**2 + (p1.y-p2.y)**2)**0.5
            
             
