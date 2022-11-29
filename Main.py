@@ -17,7 +17,8 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from Robot import Robot
+# from Robot import Robot
+from RobotC import Robot
 from Point import Point
 from Bezier import *
 from Tri import *
@@ -60,7 +61,6 @@ def init():
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
     
     triObject.readTriObject()
-    #DesenhaTri()
 
 # **********************************************************************
 #
@@ -201,7 +201,7 @@ def DesenhaMuro():
                 glPopMatrix()
 
 # **********************************************************************
-def cannonPosition():
+def trajectoryPosition():
     posicaoCanhao = robot.pos + Point(0, 0.7, 0)
 
     pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrenght    
@@ -233,7 +233,6 @@ def shoot():
     glutSolidSphere(0.3, 10, 10)
     glPopMatrix()
 
-
 # **********************************************************************
 # display()
 #   Funcao que exibe os desenhos na tela
@@ -242,20 +241,20 @@ def display():
     global Angulo
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glMatrixMode(GL_MODELVIEW)
    
     DefineLuz()
     PosicUser()
 
-    glMatrixMode(GL_MODELVIEW)
-
     DesenhaPiso()
     DesenhaMuro()
-    #DesenhaTri()
+    # DesenhaTri()
     
     robot.drawTank()
 
+    # if shot is not in movement, reposition cannon trajectory
     if (not shooting):
-        cannonPosition()
+        trajectoryPosition()
 
     if(shooting):
         shoot()
