@@ -1,6 +1,5 @@
 from Point import Point
 
-
 class Tri:   
     def __init__(self, vertices = [[]]):
         self.vertices = [[]]
@@ -25,7 +24,4 @@ class Tri:
                 
                 i = i + 1
             line = f.readline()
-             
-
-
         

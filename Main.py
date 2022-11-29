@@ -14,7 +14,6 @@
 #   http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GLUT
 #
 # ***********************************************************************************
-import math
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -32,6 +31,7 @@ tamX = 50
 tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
+
 timer = 0
 parameterT = 0
 shooting = False # flag to control shooting in display
@@ -53,12 +53,12 @@ def init():
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
     
-    global timer
+    global timer, Texturas, triObject
     timer = glutGet(GLUT_ELAPSED_TIME)
-    global Texturas
+    
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
-    global triObject
+    
     triObject.readTriObject()
     #DesenhaTri()
 
@@ -296,7 +296,7 @@ def keyboard(*args):
     global image, MuroMatrix, shooting, timer
     # If escape is pressed, kill everything.
     if args[0] == b'a':
-        if (robot.shotStrenght > 3):
+        if (robot.shotStrenght > 5):
             robot.shotStrenght -= 0.5
     if args[0] == b'd':
         if (robot.shotStrenght < 30):
@@ -344,7 +344,7 @@ def arrow_keys(a_keys: int, x: int, y: int):
 # ***********************************************************************************
 def rotationF ():
     robot.cannonDirection = Point(1,0,0)
-    robot.cannonDirection.rotateZ(robot.armRotation)
+    robot.cannonDirection.rotateZ(robot.cannonRotation)
     robot.cannonDirection.rotateY(robot.rotation)
  
 # ***********************************************************************************
