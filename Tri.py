@@ -1,16 +1,18 @@
-from Point import Point
+from Point import Point, prodVetorial
 
 class Tri:   
     def __init__(self, vertices,
                  positions, 
                  min: Point, 
                  max: Point,
+                 normal: Point,
                  color
                 ) -> None:
         self.vertices = [[]]
         self.positions = []
         self.min = Point(0,0,0)
         self.max = Point(0,0,0)
+        self.normal = Point(0,0,0)
         self.color = color
         
     def getVertices(self):
@@ -27,9 +29,10 @@ class Tri:
                 vertex1 = Point(float(pointList[0]), float(pointList[1]), float(pointList[2]))
                 vertex2 = Point(float(pointList[3]), float(pointList[4]), float(pointList[5]))
                 vertex3 = Point(float(pointList[6]), float(pointList[7]), float(pointList[8]))
-                #color = pointList[9]
-                self.vertices.append([vertex1, vertex2, vertex3])
                 
+                normal = normalCalc(vertex1,vertex2,vertex3)
+                self.vertices.append([vertex1, vertex2, vertex3, normal])
+
                 i = i + 1
 
                 for j in range (3):
@@ -47,4 +50,9 @@ class Tri:
                         self.max.z = self.vertices[i][j].z
 
             line = f.readline()
-        
+
+def normalCalc(p1, p2, p3):
+    vet1 = p2 + (p1*-1)
+    vet2 = p3 + (p2*-1)
+    vet = prodVetorial(vet1, vet2)
+    return vet      

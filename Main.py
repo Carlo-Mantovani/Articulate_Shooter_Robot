@@ -66,9 +66,9 @@ def init():
     
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
-    triModelAllies =  Tri([[]], [], Point(0,0,0), Point(0,0,0), color=(1,0,0))
-    triModelEnemies = Tri([[]], [], Point(0,0,0), Point(0,0,0), color=(0,1,0))
 
+    triModelAllies =  Tri([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(1,0,0))
+    triModelEnemies = Tri([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(0,1,0))
     triModelAllies.readTriObject("tri/sheep.tri")
     triModelEnemies.readTriObject("tri/sheep.tri")
 

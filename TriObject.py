@@ -34,7 +34,12 @@ class TriObject:
         for i in range (len(self.model.vertices)):
             glBegin(GL_TRIANGLES)
             for j in range (len(self.model.vertices[i])):
-              if (j != 3):
+                if j == 0:
+                    glNormal3f(
+                        self.model.vertices[i][3].x,
+                        self.model.vertices[i][3].y,
+                        self.model.vertices[i][3].z)
+                if (j != 3):
                     glVertex3f(
                         self.model.vertices[i][j].x, 
                         self.model.vertices[i][j].y, 

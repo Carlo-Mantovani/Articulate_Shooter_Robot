@@ -61,3 +61,20 @@ class Point:
             z = self.z * other
             return Point(x, y, z)
 
+def prodVetorial(v1: Point, v2: Point) -> Point:
+    vresult = Point()
+    vresult.x = v1.y * v2.z - (v1.z * v2.y)
+    vresult.y = v1.z * v2.x - (v1.x * v2.z)
+    vresult.z = v1.x * v2.y - (v1.y * v2.x)
+
+    vetUnitary(vresult)
+    return vresult
+
+def vetUnitary(v:Point) -> Point:
+    module = math.sqrt(v.x*v.x+v.y*v.y+v.z*v.z)
+    if (module == 0):
+        return
+    v.x /= module
+    v.y /= module
+    v.z /= module
+    return v
