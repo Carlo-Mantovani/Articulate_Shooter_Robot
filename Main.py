@@ -72,8 +72,8 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
-    # gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
+    # gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
+    gluLookAt(0, 5, 12, 25, 5, 12, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -125,7 +125,6 @@ def DefineLuz():
 #   Desenha o cenario
 # **********************************************************************
 def DesenhaCubo():
-
     glPushMatrix()
     glEnable(GL_TEXTURE_GEN_S)
     glEnable(GL_TEXTURE_GEN_T)
@@ -223,7 +222,7 @@ def shoot():
     parameterT += deltaT
     point = curve.Calcula(parameterT)
     
-    if (parameterT >= 1):
+    if (parameterT >= 1 or collideWall(point)):
         shooting = False
         parameterT = 0
     
@@ -233,6 +232,24 @@ def shoot():
     glutSolidSphere(0.3, 10, 10)
     glPopMatrix()
 
+def collideWall(point: Point) -> bool:
+     for i in range (tamY):
+        for j in range (tamZ):
+            if not MuroMatrix[i][j]:
+                continue
+            else:
+                if (point.x >= tamX/2 and 
+                    point.x <= tamX/2 + 1 and 
+                    point.y >= i and 
+                    point.y <= i + 1 and 
+                    point.z >= j and 
+                    point.z <= j + 1
+                ):
+                    for k in range (-1,2):
+                        for l in range (-1,2):
+                            MuroMatrix[i+k][j+l] = False
+                    return True
+     
 # **********************************************************************
 # display()
 #   Funcao que exibe os desenhos na tela
