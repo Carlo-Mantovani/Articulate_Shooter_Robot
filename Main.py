@@ -14,6 +14,7 @@
 #   http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GLUT
 #
 # ***********************************************************************************
+import math
 import random
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -240,9 +241,11 @@ def shoot():
     parameterT += deltaT
     point = curve.Calcula(parameterT)
     
-    if (parameterT >= 1 or collideWall(point)):
+    if ((point.x >= tamX/2-1 and point.x <= tamX/2+1
+        and collideWall(point)) or parameterT >= 1):
         shooting = False
         parameterT = 0
+        return
     
     glPushMatrix()
     glTranslated(point.x, point.y, point.z)
@@ -251,23 +254,17 @@ def shoot():
     glPopMatrix()
 
 def collideWall(point: Point) -> bool:
-     for i in range (tamY):
-        for j in range (tamZ):
-            if not MuroMatrix[i][j]:
-                continue
-            else:
-                if (point.x >= tamX/2 and 
-                    point.x <= tamX/2 + 1 and 
-                    point.y >= i and 
-                    point.y <= i + 1 and 
-                    point.z >= j and 
-                    point.z <= j + 1
-                ):
-                    for k in range (-1,2):
-                        for l in range (-1,2):
-                            if (i+ k >= 0 and i + k < tamY and j + l >= 0 and j + l < tamZ):
-                                MuroMatrix[i+k][j+l] = False
-                    return True
+    y = int(point.y)
+    z = int(point.z)
+    
+    if not MuroMatrix[y][z]:
+        return False
+    else: 
+        for k in range (-1,2):
+            for l in range (-1,2):
+                if (y + k >= 0 and y + k < tamY and z + l >= 0 and z + l < tamZ):
+                    MuroMatrix[y+k][z+l] = False
+        return True
      
 # **********************************************************************
 # display()
