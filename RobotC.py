@@ -12,7 +12,7 @@ class Robot:
         self.cannonEscale:    int   = Point(3, 0.7, 0.7)
         self.cannonRotation:  float = 0.0
         self.cannonDirection: Point = Point(1, 0, 0)
-        self.shotStrenght:    float = 10
+        self.shotStrenght:    float = 15
 
     def move(self, direction: int) -> None:  # direction should be 1 or -1
         vector = Point(1, 0, 0)
@@ -42,6 +42,8 @@ class Robot:
         self.rotateAroundPoint(self.cannonRotation, Point(-1, 0, 0))
 
     def drawShot(self) -> None:
+        glColor3f(0.0, 0.0, 0.5)
+        
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
         glVertex3f(self.cannonEscale.x/2 + self.shotStrenght/5, 0, 0)

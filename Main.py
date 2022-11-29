@@ -15,6 +15,7 @@
 #
 # ***********************************************************************************
 import math
+from pyexpat import model
 import random
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -22,8 +23,9 @@ from OpenGL.GLU import *
 # from Robot import Robot
 from RobotC import Robot
 from Point import Point
-from Bezier import *
-from Tri import *
+from Bezier import Bezier
+from Tri import Tri
+from TriObject import TriObject
 import Textures
 import time
 
@@ -41,9 +43,10 @@ shooting = False # flag to control shooting in display
 
 curve = Bezier()
 robot = Robot()
-triObjectA = Tri()
-triObjectE = Tri()
-triQuantity = 5
+
+NumObjects = 5
+allies =  [None for _ in range(NumObjects)] # lista de instancias de TriObjects aliados
+enemies = [None for _ in range(NumObjects)] # lista de instancias de TriObjects aliados
 # **********************************************************************
 #  init()
 #  Inicializa os parametros globais de OpenGL
@@ -58,15 +61,18 @@ def init():
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
     
-    global timer, Texturas, triObject
+    global timer, Texturas, NumObjects
     timer = glutGet(GLUT_ELAPSED_TIME)
     
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
-    
-    triObjectA.readTriObject("tri/sheep.tri")
-    triObjectE.readTriObject("tri/sheep.tri")
-    defineTriPos(triQuantity)
+    triModelAllies =  Tri([[]], [], Point(0,0,0), Point(0,0,0), color=(1,0,0))
+    triModelEnemies = Tri([[]], [], Point(0,0,0), Point(0,0,0), color=(0,1,0))
+
+    triModelAllies.readTriObject("tri/sheep.tri")
+    triModelEnemies.readTriObject("tri/sheep.tri")
+
+    instanceObjs(triModelAllies, triModelEnemies)
 
 # **********************************************************************
 #
@@ -174,38 +180,26 @@ def DesenhaPiso():
     glPopMatrix()
 
 # **********************************************************************
-def defineTriPos(quantity):
-    global triObjectA, triObjectE
-    for i in range(quantity):
-        triObjectA.positions.append(Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)))
-        triObjectE.positions.append(Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)))
+def instanceObjs(modelA, modelB):
+    global NumObjects
+    for i in range(NumObjects):
+        allies[i] = TriObject(
+            Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
+            Point(1,1,1),
+            modelA
+        )  
+        enemies[i] = TriObject(
+            Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
+            Point(1,1,1),
+            modelB
+        )    
 
-    
-def DesenhaTri(triObject, type): #aplicar translacao e scale sob min max 
-    
-    glPushMatrix()
-    glScalef(2,2,2)
-    if type == 0:
-        glColor3f(0,1,0)
-    else:
-        glColor3f(1,0,0)
-    for n in range (triQuantity):
-        glPushMatrix()
-        glTranslatef(triObject.positions[n].x, triObject.positions[n].y, triObject.positions[n].z)
-        
-        for i in range (len(triObject.vertices)):
-            glBegin(GL_TRIANGLES)
-        
-            for j in range (len(triObject.vertices[i])):
-                #if j == 0:
-                #    hexa = triObject.vertices[i][3][2:]
-                #    hexaInt = int(hexa, 16)
-                #    glColor3f((hexaInt >> 16) / 255, ((hexaInt >> 8) & 0xFF) / 255, (hexaInt & 0xFF) / 255)
-                if (j != 3):
-                    glVertex3f(triObject.vertices[i][j].x, triObject.vertices[i][j].y, triObject.vertices[i][j].z)
-            glEnd()
-        glPopMatrix()
-    glPopMatrix()
+# **********************************************************************
+def DrawObjects():
+    global NumObjects
+    for i in range (NumObjects):
+        allies[i].drawObject()
+        enemies[i].drawObject()
 
 # **********************************************************************
 def DesenhaMuro():
@@ -253,6 +247,7 @@ def shoot():
     glutSolidSphere(0.3, 10, 10)
     glPopMatrix()
 
+# **********************************************************************
 def collideWall(point: Point) -> bool:
     y = int(point.y)
     z = int(point.z)
@@ -281,9 +276,7 @@ def display():
 
     DesenhaPiso()
     DesenhaMuro()
-    DesenhaTri(triObjectA,0)
-    DesenhaTri(triObjectE,1)
-    
+    DrawObjects()    
     robot.drawTank()
 
     # if shot is not in movement, reposition cannon trajectory

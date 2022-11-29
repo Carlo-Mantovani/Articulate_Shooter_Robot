@@ -1,12 +1,17 @@
 from Point import Point
 
 class Tri:   
-    def __init__(self, vertices = [[]],positions = [], min = Point(0,0,0), max = Point(0,0,0)):
+    def __init__(self, vertices,
+                 positions, 
+                 min: Point, 
+                 max: Point,
+                 color
+                ) -> None:
         self.vertices = [[]]
         self.positions = []
         self.min = Point(0,0,0)
         self.max = Point(0,0,0)
-    
+        self.color = color
         
     def getVertices(self):
         return self.vertices    
@@ -40,7 +45,6 @@ class Tri:
                         self.max.y = self.vertices[i][j].y
                     if (self.vertices[i][j].z > self.max.z):
                         self.max.z = self.vertices[i][j].z
-
 
             line = f.readline()
         
