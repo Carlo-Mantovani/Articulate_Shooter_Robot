@@ -47,7 +47,7 @@ class Robot:
     def drawShot(self, modo) -> None:
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
-        glVertex3f(self.armEscale.x/2 + self.shotStrenght/2, 0, 0)
+        glVertex3f(self.armEscale.x/2 + self.shotStrenght/5, 0, 0)
         glEnd()
 
     def drawTank(self) -> None:

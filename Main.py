@@ -23,7 +23,6 @@ from Point import Point
 from Bezier import *
 from Tri import *
 import Textures
-
 import time
 
 Texturas = []
@@ -33,8 +32,11 @@ tamX = 50
 tamY = 15
 tamZ = 25
 MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
+timer = 0
+parameterT = 0
+shooting = False # flag to control shooting in display
 
-curva = Bezier()
+curve = Bezier()
 robot = Robot()
 triObject = Tri()
 # **********************************************************************
@@ -51,6 +53,8 @@ def init():
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
     
+    global timer
+    timer = glutGet(GLUT_ELAPSED_TIME)
     global Texturas
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
@@ -62,7 +66,6 @@ def init():
 #
 # **********************************************************************
 def PosicUser():
-
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluPerspective(60, AspectRatio, 0.01, 50)  # Projecao perspectiva
@@ -70,7 +73,7 @@ def PosicUser():
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
-    #gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
+    # gluLookAt(0, 0, 50, 0, 0, 0, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -209,13 +212,34 @@ def DesenhaMuro():
 def cannonPosition():
     posicaoCanhao = robot.pos + Point(0, 0.8, 0)
 
-    pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrenght
-    
+    pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrenght    
     pointC = posicaoCanhao + robot.cannonDirection * robot.shotStrenght*2
     pointC.y = 0
     
+    global curve
     curve = Bezier(posicaoCanhao, pointB, pointC)
-    curve.Traca()
+
+# **********************************************************************
+def shoot():
+    global timer, parameterT, curve, shooting
+    currentTimer = glutGet(GLUT_ELAPSED_TIME)
+    deltaTime = (currentTimer - timer)/1000
+    timer = currentTimer
+    
+    distance = 10*deltaTime
+    deltaT = distance/curve.CalculaComprimento()
+    parameterT += deltaT
+    point = curve.Calcula(parameterT)
+    
+    if (parameterT >= 1):
+        shooting = False
+        parameterT = 0
+    
+    glPushMatrix()
+    glTranslated(point.x, point.y, point.z)
+    glutSolidSphere(0.3, 10, 10)
+    glPopMatrix()
+
 
 # **********************************************************************
 # display()
@@ -232,14 +256,17 @@ def display():
     glMatrixMode(GL_MODELVIEW)
 
     DesenhaPiso()
-    # DesenhaMuro()
-    # DesenhaTri()
+    DesenhaMuro()
+    #DesenhaTri()
     
     glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
-    #glColor3f(0.0,1,0.0)
 
-    cannonPosition()
+    if (not shooting):
+        cannonPosition()
+
+    if(shooting):
+        shoot()
 
     Angulo = Angulo + 1
     glutSwapBuffers()
@@ -268,14 +295,13 @@ def animate():
         AccumDeltaT = 0
         glutPostRedisplay()
 
-
 # **********************************************************************
 #  keyboard ( key: int, x: int, y: int )
 #
 # **********************************************************************
 ESCAPE = b'\x1b'
 def keyboard(*args):
-    global image, MuroMatrix
+    global image, MuroMatrix, shooting, timer
     # If escape is pressed, kill everything.
     if args[0] == b'a':
         if (robot.shotStrenght > 3):
@@ -292,7 +318,10 @@ def keyboard(*args):
         robot.rotateArm(1)
         rotationF()
     if args[0] == b' ':
-        init()
+        if not shooting:
+            timer = glutGet(GLUT_ELAPSED_TIME)
+            shooting = True
+  
     if args[0] == ESCAPE:   # Termina o programa qdo
         os._exit(0)         # a tecla ESC for pressionada
 
