@@ -247,7 +247,8 @@ def collideWall(point: Point) -> bool:
                 ):
                     for k in range (-1,2):
                         for l in range (-1,2):
-                            MuroMatrix[i+k][j+l] = False
+                            if (i+ k >= 0 and i + k < tamY and j + l >= 0 and j + l < tamZ):
+                                MuroMatrix[i+k][j+l] = False
                     return True
      
 # **********************************************************************
