@@ -100,9 +100,7 @@ def DefineLuz():
     # Define cores para um objeto dourado
     LuzAmbiente = [0.4, 0.4, 0.4]
     LuzDifusa = [0.7, 0.7, 0.7]
-    LuzEspecular = [0.9, 0.9, 0.9]
-    PosicaoLuz0 = [2.0, 3.0, 0.0]  # Posicao da Luz
-    Especularidade = [1.0, 1.0, 1.0]
+    PosicaoLuz0 = [25, 15, 12.5]  # Posicao da Luz
 
     glEnable(GL_COLOR_MATERIAL)
 
@@ -114,15 +112,8 @@ def DefineLuz():
     # Define os parametros da luz numero Zero
     glLightfv(GL_LIGHT0, GL_AMBIENT, LuzAmbiente)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, LuzDifusa)
-    glLightfv(GL_LIGHT0, GL_SPECULAR, LuzEspecular)
     glLightfv(GL_LIGHT0, GL_POSITION, PosicaoLuz0)
     glEnable(GL_LIGHT0)
-
-    # Ativa o "Color Tracking"
-    glEnable(GL_COLOR_MATERIAL)
-
-    # Define a reflectancia do material
-    glMaterialfv(GL_FRONT, GL_SPECULAR, Especularidade)
 
     # Define a concentracao do brilho.
     # Quanto maior o valor do Segundo parametro, mais
@@ -182,7 +173,8 @@ def DesenhaTri():
     global triObject
     glPushMatrix()
     glTranslatef(10, 1, 15)
-    glScalef(0.01,0.01,0.01)
+    #glScalef(0.01,0.01,0.01)
+    glScalef(5,5,5)
     
     for i in range (len(triObject.vertices)):
         glBegin(GL_TRIANGLES)
@@ -210,7 +202,7 @@ def DesenhaMuro():
 
 # **********************************************************************
 def cannonPosition():
-    posicaoCanhao = robot.pos + Point(0, 0.8, 0)
+    posicaoCanhao = robot.pos + Point(0, 0.7, 0)
 
     pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrenght    
     pointC = posicaoCanhao + robot.cannonDirection * robot.shotStrenght*2
@@ -237,6 +229,7 @@ def shoot():
     
     glPushMatrix()
     glTranslated(point.x, point.y, point.z)
+    glColor3f(0.0,0.0,0.0)
     glutSolidSphere(0.3, 10, 10)
     glPopMatrix()
 
@@ -259,7 +252,6 @@ def display():
     DesenhaMuro()
     #DesenhaTri()
     
-    glColor3f(0.5, 0.0, 0.0)  # Vermelho
     robot.drawTank()
 
     if (not shooting):
@@ -362,14 +354,6 @@ def isInside():
            robot.pos.x < tamX-delta and \
            robot.pos.z >= 0 and \
            robot.pos.z < tamZ-1
-
-# ***********************************************************************************
-def mouse(button: int, state: int, x: int, y: int):
-    glutPostRedisplay()
-
-# ***********************************************************************************
-def mouseMove(x: int, y: int):
-    glutPostRedisplay()
 
 # ***********************************************************************************
 # Programa Principal

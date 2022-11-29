@@ -56,10 +56,14 @@ class Robot:
         self.drawShot(1)
 
         # Draw the arm
+        glColor3f(0.0, 0.0, 0.5)
+        
         glScalef(self.armEscale.x, self.armEscale.y, self.armEscale.z)
         glutSolidCube(1)
         glPopMatrix()
         # Draw the tank
+        glColor3f(0.5, 0.0, 0.0)  # Vermelho
+        
         glScalef(self.escale.x, self.escale.y, self.escale.z)
         glutSolidCube(1)
         glPopMatrix()

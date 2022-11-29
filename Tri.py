@@ -10,7 +10,7 @@ class Tri:
         return self.vertices    
 
     def readTriObject(self):
-        f = open("among_us.tri")
+        f = open("sheep.tri")
         line = f.readline()
         i = 0
         while line:
