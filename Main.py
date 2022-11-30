@@ -60,6 +60,7 @@ def init():
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_CULL_FACE)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+    robot.updateMinMax()
     
     global timer, Texturas, NumObjects
     timer = glutGet(GLUT_ELAPSED_TIME)
