@@ -1,17 +1,28 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from dataclasses import dataclass, field
 from Point import Point
-from Tri import Tri
+from TriModel import TriModel
 
+@dataclass(slots=True)
 class TriObject:
-    def __init__(self, pos: Point, 
-                 escale: Point, 
-                 model: Tri
-                ) -> None:
-        self.pos = pos 
-        self.escale = escale
-        self.model = model
+    pos:    Point 
+    escale: Point
+    model:  TriModel
+    min:    Point = field(init=False) 
+    max:    Point = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.min = (self.model.min + self.pos)
+        self.max = (self.model.max + self.pos)
+
+        self.min.x *= self.escale.x
+        self.max.x *= self.escale.x
+        self.min.y *= self.escale.y
+        self.max.y *= self.escale.y
+        self.min.z *= self.escale.z
+        self.max.z *= self.escale.z
 
     def drawObject(self):
         glPushMatrix()
@@ -29,7 +40,7 @@ class TriObject:
             self.escale.x,
             self.escale.y,
             self.escale.z
-        )
+        )   
 
         for i in range (len(self.model.vertices)):
             glBegin(GL_TRIANGLES)

@@ -21,10 +21,10 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 # from Robot import Robot
-from RobotC import Robot
+from Robot import Robot
 from Point import Point
 from Bezier import Bezier
-from Tri import Tri
+from TriModel import TriModel
 from TriObject import TriObject
 import Textures
 import time
@@ -41,10 +41,11 @@ timer = 0
 parameterT = 0
 shooting = False # flag to control shooting in display
 
+
 curve = Bezier()
 robot = Robot()
 
-NumObjects = 5
+NumObjects = 1
 allies =  [None for _ in range(NumObjects)] # lista de instancias de TriObjects aliados
 enemies = [None for _ in range(NumObjects)] # lista de instancias de TriObjects aliados
 # **********************************************************************
@@ -67,8 +68,8 @@ def init():
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
 
-    triModelAllies =  Tri([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(1,0,0))
-    triModelEnemies = Tri([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(0,1,0))
+    triModelAllies =  TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(1,0,0))
+    triModelEnemies = TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(0,1,0))
     triModelAllies.readTriObject("tri/sheep.tri")
     triModelEnemies.readTriObject("tri/sheep.tri")
 
@@ -188,18 +189,18 @@ def instanceObjs(modelA, modelB):
             Point(1,1,1),
             modelA
         )  
-        enemies[i] = TriObject(
-            Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
-            Point(1,1,1),
-            modelB
-        )    
+        # enemies[i] = TriObject(
+        #     Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
+        #     Point(1,1,1),
+        #     modelB
+        # )    
 
 # **********************************************************************
 def DrawObjects():
     global NumObjects
     for i in range (NumObjects):
         allies[i].drawObject()
-        enemies[i].drawObject()
+        # enemies[i].drawObject()
 
 # **********************************************************************
 def DesenhaMuro():
@@ -246,6 +247,7 @@ def shoot():
     glColor3f(0.0,0.0,0.0)
     glutSolidSphere(0.3, 10, 10)
     glPopMatrix()
+
 
 # **********************************************************************
 def collideWall(point: Point) -> bool:

@@ -1,6 +1,6 @@
 from Point import Point, prodVetorial
 
-class Tri:   
+class TriModel:   
     def __init__(self, vertices,
                  positions, 
                  min: Point, 
