@@ -20,7 +20,7 @@ Caso o jogador acerte o próprio tanque, o jogo é encerrado.
 
 Para executar o programa, basta executar, na pasta raíz do projeto, o comando:
 
-$ python Main.py
+    $ python Main.py
 
 O programa será executado automaticamente.  
 
