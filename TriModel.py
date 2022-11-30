@@ -1,13 +1,7 @@
 from Point import Point, prodVetorial
 
 class TriModel:   
-    def __init__(self, vertices,
-                 positions, 
-                 min: Point, 
-                 max: Point,
-                 normal: Point,
-                 color
-                ) -> None:
+    def __init__(self, color) -> None:
         self.vertices = [[]]
         self.positions = []
         self.min = Point(0,0,0)

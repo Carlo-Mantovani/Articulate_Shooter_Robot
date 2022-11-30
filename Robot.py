@@ -13,7 +13,7 @@ class Robot:
         self.cannonEscale:    int   = Point(3, 0.7, 0.7)
         self.cannonRotation:  float = 0.0
         self.cannonDirection: Point = Point(1, 0, 0)
-        self.shotStrenght:    float = 15
+        self.shotStrength:    float = 15
         self.min:             Point = Point(3.5, 0, 9)
         self.max:             Point = Point(6.5, 1, 11)
 
@@ -62,7 +62,7 @@ class Robot:
         
         glBegin(GL_LINES)
         glVertex3f(0, 0, 0)
-        glVertex3f(self.cannonEscale.x/2 + self.shotStrenght/5, 0, 0)
+        glVertex3f(self.cannonEscale.x/2 + self.shotStrength/5, 0, 0)
         glEnd()
 
     def drawTank(self) -> None:

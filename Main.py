@@ -20,7 +20,6 @@ import random
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-# from Robot import Robot
 from Robot import Robot
 from Point import Point
 from Bezier import Bezier
@@ -68,8 +67,8 @@ def init():
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
 
-    triModelAllies =  TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(0,1,0))
-    triModelEnemies = TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(1,0,0))
+    triModelAllies =  TriModel(color=(0,1,0))
+    triModelEnemies = TriModel(color=(1,0,0))
     triModelAllies.readTriObject("tri/sheep.tri")
     triModelEnemies.readTriObject("tri/sheep.tri")
 
@@ -225,8 +224,8 @@ def DesenhaMuro():
 def trajectoryPosition():
     posicaoCanhao = robot.pos + Point(0, 0.7, 0)
 
-    pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrenght    
-    pointC = posicaoCanhao + robot.cannonDirection * robot.shotStrenght*2
+    pointB = posicaoCanhao + robot.cannonDirection * robot.shotStrength    
+    pointC = posicaoCanhao + robot.cannonDirection * robot.shotStrength*2
     pointC.y = 0
     
     global curve
@@ -256,7 +255,7 @@ def shoot():
     if (collideTriObj(point)):
         resetShot()
 
-    if (point.y <= robot.escale.y 
+    if (point.y <= robot.escale.y and parameterT>=0.5
         and collide(point, robot.min, robot.max)):
         changeScore(5)
         resetShot()
@@ -400,11 +399,11 @@ def keyboard(*args):
     global image, MuroMatrix, shooting, timer
     # If escape is pressed, kill everything.
     if args[0] == b'a':
-        if (robot.shotStrenght > 5):
-            robot.shotStrenght -= 0.5
+        if (robot.shotStrength > 5):
+            robot.shotStrength -= 0.5
     if args[0] == b'd':
-        if (robot.shotStrenght < 50):
-            robot.shotStrenght += 0.5
+        if (robot.shotStrength < 50):
+            robot.shotStrength += 0.5
     if args[0] == b'i':
         image.show()
     if args[0] == b's':
