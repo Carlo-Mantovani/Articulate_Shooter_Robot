@@ -45,7 +45,7 @@ score = 0
 curve = Bezier()
 robot = Robot()
 
-NumObjects = 1
+NumObjects = 2
 allies =  [None for _ in range(NumObjects)] # lista de instancias de TriObjects aliados
 enemies = [None for _ in range(NumObjects)] # lista de instancias de TriObjects aliados
 # **********************************************************************
@@ -86,7 +86,8 @@ def PosicUser():
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     # gluLookAt(10, 4, 22, 10, 4, 10, 0, 1.0, 0)
-    gluLookAt(0, 5, 12, 25, 5, 12, 0, 1.0, 0)
+    gluLookAt(-5, 7, 12, 0, 5, 12, 0, 1.0, 0)
+    # gluLookAt(25, 25, 10, 25, 0, 12, 0, 1.0, 0)
 
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -182,14 +183,20 @@ def DesenhaPiso():
 
 # **********************************************************************
 def instanceObjs(modelA, modelB):
+    file = open("tri/instances.txt", "r")
     for i in range(NumObjects):
+        line = file.readline()
+        pos = line.split()
         allies[i] = TriObject(
-            Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
+            Point(float(pos[0]),float(pos[1]),float(pos[2])),
             Point(1,1,1),
             modelA
         )  
+
+        line = file.readline()
+        pos = line.split()
         enemies[i] = TriObject(
-            Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
+            Point(float(pos[0]),float(pos[1]),float(pos[2])),
             Point(1,1,1),
             modelB
         )    
