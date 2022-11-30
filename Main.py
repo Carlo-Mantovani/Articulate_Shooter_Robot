@@ -400,10 +400,10 @@ def keyboard(*args):
     # If escape is pressed, kill everything.
     if args[0] == b'a':
         if (robot.shotStrength > 5):
-            robot.shotStrength -= 0.5
+            robot.shotStrength -= 1
     if args[0] == b'd':
         if (robot.shotStrength < 50):
-            robot.shotStrength += 0.5
+            robot.shotStrength += 1
     if args[0] == b'i':
         image.show()
     if args[0] == b's':
