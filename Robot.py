@@ -1,3 +1,4 @@
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -13,14 +14,29 @@ class Robot:
         self.cannonRotation:  float = 0.0
         self.cannonDirection: Point = Point(1, 0, 0)
         self.shotStrenght:    float = 15
+        self.min:             Point = Point(3.5, 0, 9)
+        self.max:             Point = Point(6.5, 1, 11)
 
+    def updateMinMax(self) -> None:
+        position = Point(self.pos.x, self.pos.y, self.pos.z)
+        position.rotateY(self.rotation)
+    
+        self.min.x = position.x - self.escale.x/2
+        self.max.x = position.x + self.escale.x/2
+        self.min.y = 0
+        self.max.y = 1
+        self.min.z = position.z - self.escale.z/2
+        self.max.z = position.z + self.escale.z/2
+
+    
     def move(self, direction: int) -> None:  # direction should be 1 or -1
         vector = Point(1, 0, 0)
         vector.rotateY(self.rotation)
         self.pos = self.pos + vector * self.speed * direction
+        self.updateMinMax()
 
     def rotateArm(self, direction: int) -> None:  # direction should be 1 or -1
-        newAngle = self.cannonRotation + 3 * direction
+        newAngle = self.cannonRotation + 5 * direction
         if (newAngle < 0 or newAngle > 90):
             return
         self.cannonRotation = newAngle

@@ -40,7 +40,7 @@ MuroMatrix = [[True for _ in range(tamZ)]for _ in range(tamY)] # Matriz 15x25
 timer = 0
 parameterT = 0
 shooting = False # flag to control shooting in display
-
+score = 0
 
 curve = Bezier()
 robot = Robot()
@@ -68,8 +68,8 @@ def init():
     Texturas += [Textures.LoadTexture("textures/grass.jpg")]
     Texturas += [Textures.LoadTexture("textures/bricks.jpg")]
 
-    triModelAllies =  TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(1,0,0))
-    triModelEnemies = TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(0,1,0))
+    triModelAllies =  TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(0,1,0))
+    triModelEnemies = TriModel([[]], [], Point(0,0,0), Point(0,0,0), Point(0,0,0), color=(1,0,0))
     triModelAllies.readTriObject("tri/sheep.tri")
     triModelEnemies.readTriObject("tri/sheep.tri")
 
@@ -182,25 +182,26 @@ def DesenhaPiso():
 
 # **********************************************************************
 def instanceObjs(modelA, modelB):
-    global NumObjects
     for i in range(NumObjects):
         allies[i] = TriObject(
             Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
             Point(1,1,1),
             modelA
         )  
-        # enemies[i] = TriObject(
-        #     Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
-        #     Point(1,1,1),
-        #     modelB
-        # )    
+        enemies[i] = TriObject(
+            Point(random.randint(0, tamX//2), 0, random.randint(0, tamZ//2)),
+            Point(1,1,1),
+            modelB
+        )    
 
 # **********************************************************************
 def DrawObjects():
     global NumObjects
     for i in range (NumObjects):
-        allies[i].drawObject()
-        # enemies[i].drawObject()
+        if (allies[i] != None):
+            allies[i].drawObject()
+        if (enemies[i] != None):
+            enemies[i].drawObject()
 
 # **********************************************************************
 def DesenhaMuro():
@@ -226,7 +227,7 @@ def trajectoryPosition():
 
 # **********************************************************************
 def shoot():
-    global timer, parameterT, curve, shooting
+    global timer, parameterT
     currentTimer = glutGet(GLUT_ELAPSED_TIME)
     deltaTime = (currentTimer - timer)/1000
     timer = currentTimer
@@ -237,22 +238,90 @@ def shoot():
     point = curve.Calcula(parameterT)
     
     if ((point.x >= tamX/2-1 and point.x <= tamX/2+1
-        and collideWall(point)) or parameterT >= 1):
-        shooting = False
-        parameterT = 0
-        return
-    
+        and collideWall(point))):
+        changeScore(1)
+        resetShot()
+
+    if (parameterT >= 1):
+        changeScore(4)
+        resetShot()
+
+    if (collideTriObj(point)):
+        resetShot()
+
+    if (point.y <= robot.escale.y 
+        and collide(point, robot.min, robot.max)):
+        changeScore(5)
+        resetShot()
+   
     glPushMatrix()
     glTranslated(point.x, point.y, point.z)
     glColor3f(0.0,0.0,0.0)
     glutSolidSphere(0.3, 10, 10)
     glPopMatrix()
 
+# **********************************************************************
+def resetShot() -> None:
+    global shooting, parameterT
+    shooting = False
+    parameterT = 0
+    return
+
+# **********************************************************************
+def changeScore(obj) -> None:
+    global score
+    match obj:
+        case 1:
+            # collided with wall
+            score += 5
+        case 2:
+            # collided with an ally
+            score -= 10
+        case 3: 
+            #collided with an enemy
+            score += 10
+        case 4: 
+            #collided with floor
+            score -= 5
+        case 5: 
+            # collided with self
+            print ("Game Over")
+            os._exit(0)
+
+    print ("\nScore: ", str(score))
+
+# **********************************************************************
+def collideTriObj(point: Point) -> bool:
+    global enemies
+    for i in range (NumObjects):
+        if (allies[i] != None and collide(point, allies[i].min, allies[i].max)):
+           changeScore(2)
+           allies[i] = None
+           return True
+        if (enemies[i] != None and collide(point, enemies[i].min, enemies[i].max)):
+            changeScore(3)
+            enemies[i] = None
+            return True
+    return False
+    
+# **********************************************************************
+def collide(point: Point, min: Point, max: Point) -> bool:
+    if (point.x >= min.x and
+        point.x <= max.x and
+        point.y >= min.y and
+        point.y <= max.y and
+        point.z >= min.z and
+        point.z <= max.z):
+        return True
+    return False
 
 # **********************************************************************
 def collideWall(point: Point) -> bool:
     y = int(point.y)
     z = int(point.z)
+
+    if (y >= tamY or z >= tamZ or z < 0):
+        return False
     
     if not MuroMatrix[y][z]:
         return False
@@ -278,7 +347,7 @@ def display():
 
     DesenhaPiso()
     DesenhaMuro()
-    DrawObjects()    
+    DrawObjects()
     robot.drawTank()
 
     # if shot is not in movement, reposition cannon trajectory
@@ -327,7 +396,7 @@ def keyboard(*args):
         if (robot.shotStrenght > 5):
             robot.shotStrenght -= 0.5
     if args[0] == b'd':
-        if (robot.shotStrenght < 30):
+        if (robot.shotStrenght < 50):
             robot.shotStrenght += 0.5
     if args[0] == b'i':
         image.show()
@@ -363,6 +432,7 @@ def arrow_keys(a_keys: int, x: int, y: int):
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
         robot.rotation += 3
         rotationF()
+        
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
         robot.rotation -= 3
         rotationF()
