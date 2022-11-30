@@ -248,17 +248,17 @@ def shoot():
         changeScore(1)
         resetShot()
 
-    if (parameterT >= 1):
+    if (parameterT>=0.5
+        and collide(point, robot.min, robot.max)):
+        changeScore(5)
+        resetShot()
+    elif (parameterT >= 1):
         changeScore(4)
         resetShot()
 
     if (collideTriObj(point)):
         resetShot()
 
-    if (point.y <= robot.escale.y and parameterT>=0.5
-        and collide(point, robot.min, robot.max)):
-        changeScore(5)
-        resetShot()
    
     glPushMatrix()
     glTranslated(point.x, point.y, point.z)
